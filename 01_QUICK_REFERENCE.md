@@ -1,6 +1,6 @@
 # 🎯 Quick Reference - AI Agent Development Framework
 
-**Version:** 1.3.0 | **Updated:** February 19, 2026 | **Part:** 2/9  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 2/10  
 **Status:** Production Ready ✅  
 **Purpose:** Fast lookup for formulas, checklists, matrices, and decision trees
 
@@ -9,7 +9,7 @@
 ## 📍 Purpose
 
 This file is your **reference desk** for quick answers. No long explanations, just:
-- **7-step process** (memorize this)
+- **8-step process** (memorize this)
 - **Risk scoring formula** (0-17 scale)
 - **Guardrails by risk level** (what to enable)
 - **Architecture & Orchestration matrix** (what engine to use)
@@ -21,7 +21,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 
 ## 🗺️ Quick Navigation
 
-- [The 7-Step Process](#-the-7-step-process)
+- [The 8-Step Process](#-the-8-step-process)
 - [Risk Scoring Formula](#-risk-scoring-formula-0-17-scale)
 - [Auto-Enabled Guardrails](#-auto-enabled-guardrails-by-risk-level)
 - [Orchestration Decision Matrix](#-orchestration-decision-matrix)
@@ -29,7 +29,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 
 ---
 
-## 🔢 The 7-Step Process
+## 🔢 The 8-Step Process
 
 1. **DISCOVERY** (What problem?)
 2. **RISK SCORING** (0-17)
@@ -38,6 +38,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 5. **TOOLING** (Local vs MCP?)
 6. **IMPLEMENTATION** (Build + Test + Eval)
 7. **DEPLOY & MONITOR** (Terraform + OTEL)
+8. **MAINTAIN** (Bi-annual audit. HITL sign-off. Nothing auto-applied.)
 
 ---
 
@@ -81,3 +82,29 @@ client = Anthropic(api_key="...")
 # Always do this:
 llm = get_llm_provider()
 orchestrator = get_orchestrator()
+```
+
+**Card 2: Bi-Annual Audit (Pocket Size)**
+```text
+SCHEDULE: Every 6 months (March + September)
+CHECKS:   Dependencies | Broker/API changelogs | Framework guides
+CHANNEL:  scale.yaml → audit.notification_channel
+HITL:     Human reviews report. Approves each item.
+          Nothing auto-applied. Ever.
+BETWEEN:  Weekly CVE scan — critical alert only.
+
+WHY HITL: A dependency update can silently break calculation logic.
+          An API endpoint change can cause a silent order failure.
+          A guide recommendation can become outdated best practice.
+          You need a human who understands the system to make
+          these calls — not an automated merge.
+```
+
+---
+
+## 📌 Version & Status
+
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
+**Status:** Production Ready ✅  
+**Next File:** [02_COMPLETE_GUIDE.md](./02_COMPLETE_GUIDE.md)

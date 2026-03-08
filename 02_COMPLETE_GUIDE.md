@@ -2,7 +2,7 @@
 
 **Your comprehensive reference for building secure, scalable, production-ready AI agent systems**
 
-**Version:** 1.3.0 | **Updated:** February 19, 2026 | **Part:** 3/9  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 3/10  
 **Status:** Production Ready ✅  
 **Reading Time:** 2-3 hours (reference as needed)  
 **Total Content:** 12 sections, deep methodology
@@ -26,7 +26,7 @@ This file is the **deep methodology guide**. It explains:
 
 - [Table of Contents](#table-of-contents)
 - [Section 1: Overview & Benefits](#section-1-overview--benefits)
-- [Section 2: The 7-Step Process](#section-2-the-7-step-process-deep-dive)
+- [Section 2: The 8-Step Process](#section-2-the-8-step-process-deep-dive)
 - [Section 3: Risk Scoring System](#section-3-risk-scoring-system-0-17)
 - [Section 4: Architecture Patterns](#section-4-architecture-patterns)
 - [Section 5: Security & Guardrails](#section-5-security--guardrails)
@@ -37,7 +37,8 @@ This file is the **deep methodology guide**. It explains:
 - [Section 10: Deployment Strategies](#section-10-deployment-strategies)
 - [Section 11: Workflows & Integration](#section-11-workflows--integration)
 
-*(Note: Database and Agnostic Factory deep-dives have been moved to `08_AGNOSTIC_FACTORIES.md`)*
+*(Note: Database and Agnostic Factory deep-dives have been moved to `08_AGNOSTIC_FACTORIES.md`)*  
+*(Note: Bi-annual audit deep-dive lives in `09_AUDIT_AND_MAINTENANCE.md`)*
 
 ---
 
@@ -46,14 +47,15 @@ This file is the **deep methodology guide**. It explains:
 **Before this:** [01_QUICK_REFERENCE.md](./01_QUICK_REFERENCE.md) (Formulas, matrices)  
 **This file:** [02_COMPLETE_GUIDE.md](./02_COMPLETE_GUIDE.md) (You are here)  
 **After this:** [03_DEPENDENCY_MANAGEMENT.md](./03_DEPENDENCY_MANAGEMENT.md) (Python setup)  
-**For implementation:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Terraform)
+**For implementation:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Terraform)  
+**For maintenance:** [09_AUDIT_AND_MAINTENANCE.md](./09_AUDIT_AND_MAINTENANCE.md) (Audit & HITL)
 
 ---
 
 ## Table of Contents
 
 1. [Section 1: Overview & Benefits](#section-1-overview--benefits)
-2. [Section 2: The 7-Step Process (Deep Dive)](#section-2-the-7-step-process-deep-dive)
+2. [Section 2: The 8-Step Process (Deep Dive)](#section-2-the-8-step-process-deep-dive)
 3. [Section 3: Risk Scoring System (0-17)](#section-3-risk-scoring-system-0-17)
 4. [Section 4: Architecture Patterns](#section-4-architecture-patterns)
 5. [Section 5: Security & Guardrails](#section-5-security--guardrails)
@@ -73,7 +75,7 @@ This file is the **deep methodology guide**. It explains:
 This framework gives you everything needed to build production-ready AI agent systems:
 
 **✅ Proven Methodology**
-- 7-step discovery-to-deployment process
+- 8-step discovery-to-maintenance process
 - Risk-based security (not paranoid, not naive)
 - Test-driven development with LLM Evals
 - Production-ready from day 1
@@ -90,9 +92,14 @@ This framework gives you everything needed to build production-ready AI agent sy
 - Zero security oversights (checklists prevent)
 - No architecture regrets (patterns proven)
 
+**✅ Long-Term Health**
+- Bi-annual audits catch dependency rot, API drift, and stale recommendations
+- HITL sign-off ensures no silent breakage from auto-applied updates
+- Weekly CVE scans catch critical vulnerabilities between audits
+
 ---
 
-## Section 2: The 7-Step Process (Deep Dive)
+## Section 2: The 8-Step Process (Deep Dive)
 
 **ALWAYS follow this sequence. No shortcuts.**
 
@@ -203,6 +210,7 @@ Need to connect a tool?
 **Phase 1: Core Features + Tests (60% effort)**
 - Build core agent logic and factory interfaces.
 - Write unit tests and LLM Evals.
+- **Identify repeating patterns early.** If you're writing the same adapter/scaffold/test structure for a third time, stop and extract it into a reusable skill using the `/new-skill` prompt pattern (see `04_AI_ASSISTANT_INTEGRATION.md`). Building skills during implementation saves compounding time in later phases and future projects.
 
 **Phase 2: Integration + Security (20% effort)**
 - Add guardrails (appropriate to risk).
@@ -211,6 +219,7 @@ Need to connect a tool?
 **Phase 3: Observability + Polish (20% effort)**
 - Add OpenTelemetry tracing.
 - Setup monitoring/alerting.
+- Register all created skills in `.build-context.md` Skills Registry.
 
 ---
 
@@ -222,6 +231,25 @@ Need to connect a tool?
 1. **Infrastructure as Code (Terraform)**
 2. **CI/CD Pipeline**
 3. **Observability (OpenTelemetry)**
+
+---
+
+### Step 8: MAINTAIN & AUDIT
+
+**Purpose:** Keep the system trustworthy over time. A deployed agent that is never reviewed will drift — its dependencies age, its API contracts change, and its framework recommendations become stale.
+
+**The Bi-Annual Audit:**
+Every 6 months, the system runs an automated scan and produces a report. The human reviews it and approves each change. Nothing is auto-applied.
+
+Why this is mandatory, not optional:
+- Dependencies: A library update can change behavior silently. The human needs to read "this version changes the retry logic" before approving.
+- APIs: Broker and LLM providers deprecate endpoints with minimal notice. Catching this in a scheduled review is far better than discovering it during execution.
+- The guides themselves: Best practices in this framework age. The audit checks whether the tooling recommendations in each guide file are still current for this year.
+
+**HITL is required because:**
+These are not mechanical changes. They require someone who understands the system to judge whether a change is safe. An automated merge of a major dependency update on a high-risk system is an unacceptable pattern.
+
+**Configuration:** See `09_AUDIT_AND_MAINTENANCE.md` for full audit setup. Set `audit.notification_channel` in `scale.yaml` before first deploy.
 
 ---
 
@@ -350,17 +378,17 @@ Never click buttons in cloud consoles. Define compute, database, monitoring, and
 ## Section 11: Workflows & Integration
 
 ### Daily Development Workflow
-1. **Morning:** Tell AI: "Read `.claude-context.md` and `.bugs_tracker.md`"
+1. **Morning:** Tell AI: "Read `.build-context.md` and `.bugs_tracker.md`"
 2. **During Work:** AI uses factories for new features.
-3. **Evening:** AI updates `.claude-context.md` with what was accomplished.
+3. **Evening:** AI updates `.build-context.md` with what was accomplished.
 
 ---
 
 ## 📌 File Meta
 
-**Version:** 1.3.0  
-**Released:** February 19, 2026  
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
 **Status:** Production Ready ✅  
-**Part of:** 9-Part AI Agent Framework  
+**Part of:** 10-Part AI Agent Framework  
 
 **Next File:** [03_DEPENDENCY_MANAGEMENT.md](./03_DEPENDENCY_MANAGEMENT.md)

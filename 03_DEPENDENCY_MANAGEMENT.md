@@ -1,6 +1,6 @@
 # 📦 Dependency Management - Python Setup & Reproducible Builds
 
-**Version:** 1.3.0 | **Updated:** February 19, 2026 | **Part:** 4/9  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 4/10  
 **Status:** Production Ready ✅  
 **Purpose:** Ensure reproducible builds across Dev, Staging, and Production environments
 
@@ -17,6 +17,8 @@ This file teaches you to manage Python dependencies correctly so:
 - **Orchestration frameworks (LangGraph, CrewAI) remain optional and pluggable**
 
 **Golden Rule:** "Development is Flexible. Production is Frozen."
+
+**Long-term health:** Dependencies that are "frozen" today will age. The bi-annual audit in `09_AUDIT_AND_MAINTENANCE.md` ensures your lock file doesn't become a liability. This file handles the *how* of dependency management; File 09 handles the *when* of reviewing them.
 
 ---
 
@@ -38,8 +40,9 @@ This file teaches you to manage Python dependencies correctly so:
 
 **Before this:** [02_COMPLETE_GUIDE.md](./02_COMPLETE_GUIDE.md) (Deep methodology)  
 **This file:** [03_DEPENDENCY_MANAGEMENT.md](./03_DEPENDENCY_MANAGEMENT.md) (You are here)  
-**After this:** [04_AI_ASSISTANT_INTEGRATION.md](./04_AI_ASSISTANT_INTEGRATION.md) (Claude setup)  
-**For production:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Terraform + Docker)
+**After this:** [04_AI_ASSISTANT_INTEGRATION.md](./04_AI_ASSISTANT_INTEGRATION.md) (AI assistant setup)  
+**For production:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Terraform + Docker)  
+**For ongoing maintenance:** [09_AUDIT_AND_MAINTENANCE.md](./09_AUDIT_AND_MAINTENANCE.md) (Bi-annual audit)
 
 ---
 
@@ -217,9 +220,9 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ## 📌 File Meta
 
-**Version:** 1.3.0  
-**Released:** February 19, 2026  
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
 **Status:** Production Ready ✅  
-**Part of:** 9-Part AI Agent Framework  
+**Part of:** 10-Part AI Agent Framework  
 
 **Next File:** [04_AI_ASSISTANT_INTEGRATION.md](./04_AI_ASSISTANT_INTEGRATION.md) (AI Setup)

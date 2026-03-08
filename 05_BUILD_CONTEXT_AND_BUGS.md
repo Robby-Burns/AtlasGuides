@@ -1,6 +1,6 @@
 # 🧠 Build Context & Bug Tracking - AI Project Memory
 
-**Version:** 1.4.0 | **Updated:** March 1, 2026 | **Part:** 6/9  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 6/10  
 **Status:** Production Ready ✅  
 **Purpose:** Give AI Coding Assistants project memory to prevent repeated bugs and architecture drift.
 
@@ -8,10 +8,10 @@
 
 ## 📍 Purpose
 
-AI Coding Assistants (Cursor, Windsurf, Claude Code) have **zero memory between sessions**. 
+AI Coding Assistants (Cursor, Windsurf, Claude Code, Antigravity) have **zero memory between sessions**. 
 
 To solve this, we use two files that the **AI is responsible for reading and updating**:
-1. **`.build-context.md`** — Project state, recent changes, architecture (formerly `.claude-context.md`).
+1. **`.build-context.md`** — Project state, recent changes, architecture, audit history.
 2. **`.bugs_tracker.md`** — Active bugs, patterns, root causes.
 
 **Core Rule:** The AI must manage its own memory through a strict "Read -> Act -> Update" loop (enforced via `agent.md` in File `04`).
@@ -84,7 +84,8 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 ---
 
 ## 🛠️ Important Architectural Decisions
-*(AI: Never delete these entries. Add to them when making technical choices)*
+*(AI: Never delete these entries. Add to them when making technical choices.)*
+*(AI: Audit findings that result in approved changes are architectural decisions. Log them here with the audit date and the rationale the human gave for approving.)*
 
 **Decision:** Use hybrid tooling  
 **Why:** DB queries need speed (local); file access needs safety (MCP)
@@ -92,10 +93,41 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 **Decision:** Agent Orchestration  
 **Why:** Decided to use LangGraph to manage cyclic agent routing instead of linear scripts.
 
-📄 File 2: .bugs_tracker.md
-Template (Create this in your root folder)
-Markdown
+---
 
+## 🔍 Audit History
+*(AI: Add an entry each time an audit is completed or an item is applied)*
+
+**Audit [DATE]:**
+  Completed: [DATE]
+  Items approved: [N]
+  Items deferred: [N]
+  Items rejected: [N]
+  Applied changes: [list]
+  Test result: PASS / FAIL + rollback note if applicable
+  Sign-off: [human name or initials]
+
+**Between-audit CVE alerts:**
+  [DATE]: [package] [CVE-ID] — [action taken]
+
+---
+
+## 🧩 Skills Registry
+*(AI: Register every reusable skill here. Check this list before writing a new pattern — if a skill already exists, use it.)*
+
+| Skill Name | Location | Trigger Condition | Created | Last Audited |
+|------------|----------|-------------------|---------|--------------|
+| [e.g., test-scaffold] | `/skills/test-scaffold/` | "Create a Pytest file with LLM-as-a-judge for any new agent" | [DATE] | [DATE] |
+| [e.g., factory-generator] | `/skills/factory-generator/` | "Create interface + adapter + factory for a new external service" | [DATE] | [DATE] |
+```
+
+---
+
+## 📄 File 2: `.bugs_tracker.md`
+
+### Template (Create this in your root folder)
+
+```markdown
 # Bug Tracker & Pattern Memory
 
 **Last Updated:** [DATE]  
@@ -123,15 +155,15 @@ Markdown
 **Occurrences:** 1 time (External Search Tool)
 **Root cause:** Parallel agent execution triggered 429 errors.
 **Solution:** Implemented the Token Bucket algorithm in the `RateLimiter` middleware.
+```
 
-📌 File Meta
+---
 
-Version: 1.4.0
+## 📌 File Meta
 
-Released: March 1, 2026
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
+**Status:** Production Ready ✅  
+**Part of:** 10-Part AI Agent Framework  
 
-Status: Production Ready ✅
-
-Part of: 9-Part AI Agent Framework
-
-Next File: 06_INFRASTRUCTURE_AS_CODE.md (Deployment)
+**Next File:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Deployment)

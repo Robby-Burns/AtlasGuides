@@ -1,8 +1,8 @@
 # 🤖 AI Assistant Integration - Tool-Agnostic Workflows
 
-**Version:** 1.4.0 | **Updated:** March 1, 2026 | **Part:** 5/9  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 5/10  
 **Status:** Production Ready ✅  
-**Purpose:** How to configure and interact with AI coding assistants (Cursor, Windsurf, Claude Code) so they follow this framework.
+**Purpose:** How to configure and interact with AI coding assistants (Cursor, Windsurf, Claude Code, Antigravity) so they follow this framework.
 
 ---
 
@@ -21,6 +21,7 @@ AI coding assistants change constantly. This file teaches you the **principles**
 - [Context Loading Strategy](#-context-loading-strategy)
 - [Enforcing the Risk Score](#-enforcing-the-risk-score)
 - [Standardized Commands (Prompt Patterns)](#-standardized-commands-prompt-patterns)
+- [Skill Creation & Reuse](#-skill-creation--reuse)
 - [Troubleshooting AI Hallucinations](#-troubleshooting-ai-hallucinations)
 
 ---
@@ -36,7 +37,7 @@ You are an expert AI Systems Architect building a production-grade AI agent syst
 
 You must strictly follow this "Read -> Research -> Act -> Update" loop for every task:
 
-1. **PHASE 1: READ (MANDATORY)** Before writing any code, you MUST silently read `.build-context.md` (formerly .claude-context) and `.bugs_tracker.md`. Use this to understand where we left off. Do not ask for setup information that is already in these files.
+1. **PHASE 1: READ (MANDATORY)** Before writing any code, you MUST silently read `.build-context.md` and `.bugs_tracker.md`. Use this to understand where we left off. Do not ask for setup information that is already in these files.
 
 2. **PHASE 2: RESEARCH (TECH RADAR)** Before importing ANY new library, you must trigger the `tech-radar-skill` to validate it is the current SOTA (State of the Art) for [CURRENT_YEAR]. 
    - Do NOT use training-data defaults (like `requests` or `pandas`) blindly.
@@ -53,110 +54,172 @@ You must strictly follow this "Read -> Research -> Act -> Update" loop for every
    Immediately after making a change, fixing a bug, or making an architectural decision, YOU must update the memory files:
    - Fixed a bug? Add the root cause and solution to `.bugs_tracker.md`.
    - Built a feature or changed a file? Update the "Current State" and "Recent Changes" sections in `.build-context.md`.
+   - Approved an audit item? Log it in the "Audit History" section of `.build-context.md`.
 
-🛡️ THE "WORST-CASE" CODING STANDARD (Mandatory)
+5. **PHASE 5: RECOGNIZE & PROPOSE SKILLS (CONTINUOUS)**
+   As you build, you must watch for repeating patterns that should become reusable skills. A pattern qualifies as a skill candidate when:
+   - You've written the same adapter/factory/scaffold pattern **3+ times** across features or projects.
+   - A workflow step (e.g., "validate API response", "generate test scaffold", "create migration script") is manually repeated every time.
+   - An audit finding keeps recurring across cycles (same type of fix applied twice = skill candidate).
+   
+   When you identify a candidate, **propose it immediately:**
+   "I've noticed we repeat [pattern] in [locations]. This should be extracted into a reusable skill. Shall I create it now?"
+   
+   Skills are stored in `/skills/` and registered in the "Skills Registry" section of `.build-context.md`.
+```
 
-Rule 1: No Happy Paths.
+---
+
+## 🛡️ THE "WORST-CASE" CODING STANDARD (Mandatory)
+
+**Rule 1: No Happy Paths.**
 Assume every API call will timeout, every database connection will fail, and every user input is malicious.
 
-    ❌ Bad: response = api.get(url); return response.json()
+- ❌ Bad: `response = api.get(url); return response.json()`
+- ✅ Good: `try: response = api.get(url, timeout=5); response.raise_for_status(); ... except RequestException: handle_error()`
 
-    ✅ Good: try: response = api.get(url, timeout=5); response.raise_for_status(); ... except RequestException: handle_error()
-
-Rule 2: The "KISS" Constraint (Keep It Simple, Stupid).
+**Rule 2: The "KISS" Constraint (Keep It Simple, Stupid).**
 Before building a "Multi-Agent RAG System with Vector Memory," ask: Can this be a 5-line Python script?
 
-    If a simple solution works, the complex one is forbidden.
+- If a simple solution works, the complex one is forbidden.
+- Architect Role: You are the gatekeeper. Reject over-engineered PRs immediately.
 
-    Architect Role: You are the gatekeeper. Reject over-engineered PRs immediately.
-
-Rule 3: The 8-Step Debugging Protocol.
+**Rule 3: The 8-Step Debugging Protocol.**
 When a bug is found, you MUST follow this exact sequence. Do not skip steps:
 
-    Find: Locate the exact line of failure.
+1. **Find:** Locate the exact line of failure.
+2. **Reproduce:** Create a script that forces the error to happen.
+3. **Prove (Repro):** Show the log output confirming the crash.
+4. **Root Cause:** Explain why it failed (don't guess).
+5. **Fix:** Write the code correction.
+6. **Test:** Run the reproduction script again.
+7. **Regression Check:** Run the full test suite to ensure nothing else broke.
+8. **Prove (Fix):** Show the log output confirming success.
 
-    Reproduce: Create a script that forces the error to happen.
+---
 
-    Prove (Repro): Show the log output confirming the crash.
-
-    Root Cause: Explain why it failed (don't guess).
-
-    Fix: Write the code correction.
-
-    Test: Run the reproduction script again.
-
-    Regression Check: Run the full test suite to ensure nothing else broke.
-
-    Prove (Fix): Show the log output confirming success.
-
-🧠 Context Loading Strategy
+## 🧠 Context Loading Strategy
 
 Because AI context windows are finite, do not dump all framework files into every prompt.
 
-The Optimal Context Loading Sequence:
+**The Optimal Context Loading Sequence:**
 
-    Always in Context: agent.md, .build-context.md, .bugs_tracker.md.
+- **Always in Context:** `agent.md`, `.build-context.md`, `.bugs_tracker.md`.
+- **On Project Start:** Have the AI read `00_START_HERE.md` and `01_QUICK_REFERENCE.md`.
+- **When doing DevOps:** `@` or reference `06_INFRASTRUCTURE_AS_CODE.md` specifically.
+- **When refactoring/swapping:** `@` or reference `08_AGNOSTIC_FACTORIES.md`.
+- **When doing maintenance/audit:** `@` or reference `09_AUDIT_AND_MAINTENANCE.md`.
 
-    On Project Start: Have the AI read 00_START_HERE.md and 01_QUICK_REFERENCE.md.
+---
 
-    When doing DevOps: @ or reference 06_INFRASTRUCTURE_AS_CODE.md specifically.
-
-    When refactoring/swapping: @ or reference 08_AGNOSTIC_FACTORIES.md.
-
-🚫 Enforcing the Risk Score
+## 🚫 Enforcing the Risk Score
 
 If the AI tries to write code without knowing the risk score, it will guess the guardrails (usually getting them wrong).
 
-Your workflow when starting a new agent:
+**Your workflow when starting a new agent:**
 
-    You: "Let's build a new agent that reads customer emails and drafts refund approvals. The Risk Score is 13 (High). Read 01_QUICK_REFERENCE.md to see what guardrails are required, then propose the architecture."
+> You: "Let's build a new agent that reads customer emails and drafts refund approvals. The Risk Score is 13 (High). Read `01_QUICK_REFERENCE.md` to see what guardrails are required, then propose the architecture."
 
 If the AI starts coding immediately without guardrails, stop it:
 
-    You: "Halt. You forgot the Risk Score 13 guardrails. Implement the Circuit Breaker and Human-in-the-loop HITL brake before writing the email parsing logic."
+> You: "Halt. You forgot the Risk Score 13 guardrails. Implement the Circuit Breaker and Human-in-the-loop HITL brake before writing the email parsing logic."
 
-💬 Standardized Commands (Prompt Patterns)
+---
+
+## 💬 Standardized Commands (Prompt Patterns)
 
 Instead of typing long paragraphs, use these standardized prompt patterns.
-/new-agent
 
-    "I want to create a new agent named [Name]. The Risk Score is [X]. Please:
+### `/new-agent`
 
-        Read .build-context.md.
+> "I want to create a new agent named [Name]. The Risk Score is [X]. Please:
+> 1. Read `.build-context.md`.
+> 2. Define its interface using our factory pattern.
+> 3. Create a mock tool adapter for testing.
+> 4. Write the Pytest file with LLM-as-a-judge Eval checks.
+> Do not write the implementation until we agree on the tests."
 
-        Define its interface using our factory pattern.
+### `/swap-component`
 
-        Create a mock tool adapter for testing.
+> "We need to swap our [Database/LLM/Orchestrator] from [Current] to [New].
+> Please read `08_AGNOSTIC_FACTORIES.md`. Write the new adapter class, add it to the factory, tell me what environment variable to update in `scale.yaml`, and update `.build-context.md` with this architectural decision."
 
-        Write the Pytest file with LLM-as-a-judge Eval checks.
-        Do not write the implementation until we agree on the tests."
+### `/run-audit`
 
-/swap-component
+> "Run the bi-annual audit process. Read `09_AUDIT_AND_MAINTENANCE.md` for the full procedure. Check dependencies, API contracts, and framework guide recommendations. Generate the report at `docs/audits/AUDIT_REPORT_[DATE].md` and notify via the configured channel."
 
-    "We need to swap our [Database/LLM/Orchestrator] from [Current] to [New].
-    Please read 08_AGNOSTIC_FACTORIES.md. Write the new adapter class, add it to the factory, tell me what environment variable to update in scale.yaml, and update .build-context.md with this architectural decision."
+### `/new-skill`
 
-🔧 Troubleshooting AI Hallucinations
-Problem	AI Cause	Solution
-AI hardcodes OpenAI API calls	Default training bias	Point it to 08_AGNOSTIC_FACTORIES.md and say "Use the LLM Factory."
-AI forgets previous decisions	Context window pushed out	Say: "Read .build-context.md to refresh your memory."
-AI writes monolithic code	Lazy generation	Say: "Refactor this into the Modular Monolith structure defined in 02_COMPLETE_GUIDE.md."
-AI installs random libraries	Pip hallucination	Say: "Check pyproject.toml and use uv for dependency management."
-📌 File Meta
+> "I've identified a repeating pattern: [describe the pattern and where it repeats].
+> Please:
+> 1. Read `.build-context.md` to check if a similar skill already exists in the Skills Registry.
+> 2. Define the skill's interface (what it takes in, what it produces).
+> 3. Write the skill implementation in `/skills/[skill-name]/`.
+> 4. Include a `SKILL.md` with usage instructions and trigger conditions.
+> 5. Add it to the Skills Registry in `.build-context.md`.
+> 6. Write a test that validates the skill works in isolation."
 
-Version: 1.4.0
+---
 
-Released: March 1, 2026
+## 🧩 Skill Creation & Reuse
 
-Status: Production Ready ✅
+### When to Create a Skill
 
-Part of: 9-Part AI Agent Framework
+Skills are reusable, self-contained automation patterns that the AI assistant can invoke by name. They prevent the AI from reinventing the same solution every session.
 
-Next File: 05_BUILD_CONTEXT_AND_BUGS.md (Memory)
+**The "Rule of 3" trigger:** If you or the AI have written the same pattern three or more times — across features, projects, or audit cycles — it must be extracted into a skill.
 
+**Common skill candidates:**
+- Test scaffold generators (e.g., "create a Pytest file with LLM-as-a-judge for this agent")
+- Factory boilerplate (e.g., "create interface + adapter + factory for a new external service")
+- Migration scripts (e.g., "generate an Alembic migration for this schema change")
+- Deployment validators (e.g., "check that all env vars in scale.yaml exist in the secret manager")
+- Audit sub-checks (e.g., "scan pyproject.toml for unmaintained packages")
 
-### Clarifying Questions to Complete Your Patch Pack:
+### Skill File Structure
 
-1.  **File 06 (Infrastructure):** Your "Patch Pack" mentioned updating `06_INFRASTRUCTURE_AS_CODE.md` to include the **"Container-First" Deployment Strategy**. Do you want me to generate the full Markdown for that file now?
-2.  **File 08 (Factories):** The patch also mentioned updating `08_AGNOSTIC_FACTORIES.md` to include the **Tech Radar -> Factory Pipeline**. Should I generate that file next?
-3.  **Renaming Context:** I noticed in the new rules we refer to `.build-context.md`
+Each skill lives in `/skills/[skill-name]/` and contains:
+
+```text
+/skills/
+  /test-scaffold/
+    SKILL.md          # Usage instructions, trigger conditions, examples
+    skill.py          # The implementation
+    test_skill.py     # Validates the skill in isolation
+  /factory-generator/
+    SKILL.md
+    skill.py
+    test_skill.py
+```
+
+### Skill Lifecycle
+
+1. **Identify:** AI proposes during Phase 5 of the Read → Research → Act → Update → Recognize loop.
+2. **Create:** Use the `/new-skill` prompt pattern. AI writes the skill, test, and `SKILL.md`.
+3. **Register:** AI adds the skill to the Skills Registry in `.build-context.md`.
+4. **Use:** AI invokes the skill by name in future sessions instead of rewriting the pattern.
+5. **Audit:** During bi-annual audits, skills are reviewed for staleness (see `09_AUDIT_AND_MAINTENANCE.md`).
+
+---
+
+## 🔧 Troubleshooting AI Hallucinations
+
+| Problem | AI Cause | Solution |
+|---------|----------|----------|
+| AI hardcodes OpenAI API calls | Default training bias | Point it to `08_AGNOSTIC_FACTORIES.md` and say "Use the LLM Factory." |
+| AI forgets previous decisions | Context window pushed out | Say: "Read `.build-context.md` to refresh your memory." |
+| AI writes monolithic code | Lazy generation | Say: "Refactor this into the Modular Monolith structure defined in `02_COMPLETE_GUIDE.md`." |
+| AI installs random libraries | Pip hallucination | Say: "Check `pyproject.toml` and use `uv` for dependency management." |
+| AI skips audit maintenance | No awareness of Step 8 | Say: "Read `09_AUDIT_AND_MAINTENANCE.md` and follow the audit checklist." |
+| AI rebuilds the same pattern repeatedly | No skill awareness | Say: "We've built this 3 times. Use `/new-skill` to extract it into a reusable skill." |
+
+---
+
+## 📌 File Meta
+
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
+**Status:** Production Ready ✅  
+**Part of:** 10-Part AI Agent Framework  
+
+**Next File:** [05_BUILD_CONTEXT_AND_BUGS.md](./05_BUILD_CONTEXT_AND_BUGS.md) (Memory)
