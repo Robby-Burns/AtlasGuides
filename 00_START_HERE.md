@@ -33,22 +33,27 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 ## ⚡ 30-Second Quick Start
 
 **If you are starting a new project right now:**
-1. Read `01_QUICK_REFERENCE.md` to calculate your Risk Score (0-17).
-2. Use the `/new-agent` prompt pattern from `04_AI_ASSISTANT_INTEGRATION.md`.
-3. Force the AI to use `08_AGNOSTIC_FACTORIES.md` so you aren't locked into one LLM or orchestrator.
-4. Set `audit.notification_channel` in `scale.yaml` before first deploy (see `09_AUDIT_AND_MAINTENANCE.md`).
+1. Copy `agent.md` (the System Kernel) into your project root and run `./scripts/sync-kernel.sh`. This sets up Cursor, Claude Code, Windsurf, and Antigravity's `.agents/` folder in one command.
+2. Generate your `AgentSpec.md` using `MASTER_AGENT_DISCOVERY_PROMPT.md` — this defines *what* you're building.
+3. Read `01_QUICK_REFERENCE.md` to calculate your Risk Score (0-17).
+4. Use the `/new-agent` prompt pattern from `agent.md`.
+5. Force the AI to use `08_AGNOSTIC_FACTORIES.md` so you aren't locked into one LLM or orchestrator.
+6. Set `audit.notification_channel` in `scale.yaml` before first deploy (see `09_AUDIT_AND_MAINTENANCE.md`).
+
+**New team member?** Read `TEAM_ONBOARDING.md` first — it covers everything in 15 minutes.
 
 ---
 
 ## 🆕 What's New in v1.5.0
 
-- **Bi-Annual Audit System:** Scheduled dependency, API, and framework audits with mandatory HITL sign-off. Nothing auto-applied. See `09_AUDIT_AND_MAINTENANCE.md`.
-- **Notification Factory:** Configurable notification channel (Slack, email, Teams, webhook, or none) via `get_notifier()` factory.
+- **System Kernel (`agent.md`):** Single source of truth for AI behavior. Enforces Citation Law, 5-Phase Loop, and Debate Protocol across all tools (Cursor, Claude Code, Gemini/Antigravity, Windsurf).
+- **Tiered Debate Protocol:** Tier 1 (lightweight sanity checks), Tier 2 (full council at key moments), Tier 3 (human-triggered `/debate`). Ensures quality without killing velocity.
+- **Multi-Tool Sync:** `sync-kernel.sh` propagates kernel to `.cursorrules`, `CLAUDE.md`, and `.windsurfrules` in one command.
+- **Team Onboarding:** `TEAM_ONBOARDING.md` gets new team members productive in 15 minutes.
+- **Bi-Annual Audit System:** Scheduled dependency, API, framework, and skills audits with mandatory HITL sign-off.
+- **Skills Lifecycle:** Rule of 3 identification, `/new-skill` command, Skills Registry in `.build-context.md`, audit review in Layer 4.
 - **Naming Normalization:** `.claude-context.md` renamed to `.build-context.md` across all files for tool-agnostic clarity.
-- **10-Part Framework:** New `09_AUDIT_AND_MAINTENANCE.md` added as the dedicated maintenance guide.
-- **Agnostic Orchestration:** Full support for LangGraph (cyclic/stateful) and CrewAI (role-based) via factories.
-- **AI-First Bookkeeping:** The AI is now strictly responsible for managing its own memory via `.build-context.md`.
-- **LLM Evals:** Integrated LLM-as-a-judge methodologies into the standard testing flow.
+- **10-Part Framework:** New `09_AUDIT_AND_MAINTENANCE.md` as the dedicated maintenance guide.
 
 ---
 
@@ -80,6 +85,16 @@ Before writing any code, you must score your agent.
 | **8** | `07_CONFIGURATION_CONTROL.md` | `scale.yaml` and cost controls. |
 | **9** | `08_AGNOSTIC_FACTORIES.md` | How to swap DBs, LLMs, and Orchestrators via config. |
 | **10** | `09_AUDIT_AND_MAINTENANCE.md` | Bi-annual audit system, HITL sign-off, and notification setup. |
+
+**Supporting Files:**
+
+| File | What it is |
+| :--- | :--- |
+| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law. Synced to all tools. |
+| `TEAM_ONBOARDING.md` | 15-minute onboarding guide for new team members. |
+| `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. |
+| `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. |
+| `MASTER_DOCS_PROMPT.md` | Post-build prompt for generating project documentation. |
 
 ---
 

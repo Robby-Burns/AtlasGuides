@@ -11,8 +11,9 @@
 1. Copy everything below the line `--- BEGIN PROMPT ---`.
 2. Paste it into a new chat window (use the strongest model available).
 3. Answer the AI's questions as it interviews you. 
-4. Once the AI generates the final `AgentSpec.md`, copy that file into your project's `/docs/` folder.
-5. You are now ready to start coding using the 10-Part Framework.
+4. Once the AI generates the final `AgentSpec.md`, save it to your project's `/docs/` folder.
+5. Run `./scripts/sync-kernel.sh` — this copies `AgentSpec.md` into `.agents/workflows/` for Antigravity and makes it available to all AI tools via the kernel's Phase 1 READ directive.
+6. You are now ready to start coding using the 10-Part Framework.
 
 ---
 

@@ -175,6 +175,8 @@ TOTAL: 10 (MEDIUM) → Standard guardrails required
 
 **Purpose:** Choose system design that handles your scale and workflow complexity.
 
+**Debate Trigger:** This step is a **Tier 2 Full Council** debate. The kernel in `agent.md` auto-triggers it. The Builder, Protector, and Scaler roles must weigh in before any architecture is finalized. At Risk Score 11+, this is mandatory on every sub-decision.
+
 **Orchestration Layer (New for 2026):**
 Agents rarely work alone. You must explicitly design how they coordinate:
 * **Sequential Pipeline (CrewAI):** Use this when tasks are strictly ordered. Agent A gathers data -> Agent B summarizes -> Agent C formats.
@@ -378,9 +380,9 @@ Never click buttons in cloud consoles. Define compute, database, monitoring, and
 ## Section 11: Workflows & Integration
 
 ### Daily Development Workflow
-1. **Morning:** Tell AI: "Read `.build-context.md` and `.bugs_tracker.md`"
-2. **During Work:** AI uses factories for new features.
-3. **Evening:** AI updates `.build-context.md` with what was accomplished.
+1. **Morning:** Type `/status` — AI reads `.build-context.md`, summarizes state, lists active bugs and available skills.
+2. **During Work:** AI follows the 5-Phase Loop from `agent.md`. Tier 1 sanity checks happen inline. Tier 2 debates trigger at key decisions — read the verdict and confirm.
+3. **Evening:** Tell AI: "Update `.build-context.md` with what we accomplished today." AI updates Current State, Recent Changes, Skills Registry, and Architectural Decisions.
 
 ---
 
