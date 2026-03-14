@@ -1,9 +1,9 @@
 # 🚀 START HERE - AI Agent Framework Documentation
 
-**Version:** 1.6.0 | **Updated:** March 13, 2026 | **Part:** 1/10 of Framework  
+**Version:** 1.6.1 | **Updated:** March 13, 2026 | **Part:** 1/10 of Framework  
 **For:** AI Coding Assistants (Cursor/Claude Code/Antigravity) + You  
 **Status:** Production Ready ✅  
-**Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • 2026-compliant • 30-50% faster builds • 80%+ code reuse)
+**Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • date-of-use validated • 30-50% faster builds • 80%+ code reuse)
 
 ---
 
@@ -72,13 +72,25 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 
 Before writing any code, you must score your agent.
 
-**Data Sensitivity (0-4)** + **Agent Autonomy (0-5)** + **System Impact (0-5)** + **Model Risk (0-3)** = **Total Score**
+**The formula** (canonical — matches `01_QUICK_REFERENCE.md` and `02_COMPLETE_GUIDE.md`):
 
-* **0-5 (Low Risk):** Basic error handling. Proceed fast. (e.g., internal summarizer)
-* **6-11 (Medium Risk):** Requires Circuit Breakers, Rate Limiting, and strict output validation. (e.g., draft email generator)
-* **12-17 (High Risk):** Requires Human-in-the-Loop (HITL), dedicated sidecar proxy, and full audit trails. (e.g., automated refund issuer)
+| Dimension | Range | What It Measures |
+|-----------|-------|-----------------|
+| **Input Risk** | 0–5 | How dangerous or open-ended is the data the agent receives? (0 = structured internal data; 5 = raw unvalidated user input with PII) |
+| **Output Risk** | 0–5 | What can the agent's output affect? (0 = read-only report; 5 = writes to financial systems, sends to customers) |
+| **Data Risk** | 0–4 | How sensitive is the data the agent touches? (0 = none; 4 = PII, health records, financial data) |
+| **Model Risk** | 0–3 | How complex is the model's reasoning and tool use? (0 = simple classifier; 3 = multi-agent with live API tool calls) |
 
-*(See `01_QUICK_REFERENCE.md` for the exact calculation formula).*
+**Input Risk (0–5) + Output Risk (0–5) + Data Risk (0–4) + Model Risk (0–3) = Total Score (0–17)**
+
+* **0–4 (Low Risk):** Basic error handling. Proceed fast. (e.g., internal summarizer)
+* **5–10 (Medium Risk):** Requires Circuit Breakers, Rate Limiting, and strict output validation. (e.g., draft email generator)
+* **11–17 (High Risk):** Requires Human-in-the-Loop (HITL), dedicated sidecar proxy, immutable audit logs, and full audit trails. (e.g., automated quote drafter writing to a financial system)
+
+**Show your math in `AgentSpec.md`.** A score without a dimension breakdown cannot be verified
+and is not compliant with the framework. See `02_COMPLETE_GUIDE.md` Section 3 for examples.
+
+*(See `01_QUICK_REFERENCE.md` for the pocket-size reference card and examples.)*
 
 ---
 
@@ -103,7 +115,7 @@ Before writing any code, you must score your agent.
 | :--- | :--- |
 | `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law, deploy error protocol. Synced to all tools. |
 | `TEAM_ONBOARDING.md` | 15-minute onboarding guide for new team members. |
-| `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. |
+| `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. Detects and blocks AgentSpec.md collisions. |
 | `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. |
 | `MASTER_DOCS_PROMPT.md` | Post-build prompt for generating project documentation. |
 
@@ -111,7 +123,8 @@ Before writing any code, you must score your agent.
 
 ## 📌 Version & Status
 
-**Version:** 1.6.0  
+**Version:** 1.6.1
 **Released:** March 13, 2026  
 **Status:** Production Ready ✅  
+**Change from 1.6.0:** Risk scoring formula clarified to canonical Input/Output/Data/Model dimensions with descriptions. Pocket-size reference remains in `01_QUICK_REFERENCE.md`.  
 **Next File:** [01_QUICK_REFERENCE.md](./01_QUICK_REFERENCE.md)

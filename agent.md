@@ -34,9 +34,16 @@ Before writing any code, silently read:
 Do not ask for setup information that is already in these files.
 
 **PHASE 2: RESEARCH (Before Any New Dependency)**
-Before importing ANY new library, validate it is the current SOTA for the current year.
+Before importing ANY new library, validate it against current SOTA **as of today's actual
+date — not the date this framework was authored**. Framework files carry version dates in
+their headers; those are change history, not endorsements of the tools mentioned inside them.
+A tool recommended in this framework may have been superseded, deprecated, or overtaken by a
+better option since the file was last edited. Always verify.
 - Do NOT use training-data defaults blindly.
-- Validate the library is maintained and fits the Risk Score.
+- Search for the current recommended tool for this task and year.
+- Validate the library is actively maintained and fits the Risk Score.
+- If the framework guide recommends a specific tool, confirm it is still the current best
+  choice before using it. If a better option exists, flag it with a Tier 1 Sanity Check.
 - **Citation Required:** Reference `03_DEPENDENCY_MANAGEMENT.md` for dependency standards.
 
 **PHASE 3: ACT (The Risk Score Lock & Fault Tolerance)**

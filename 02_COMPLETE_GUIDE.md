@@ -177,7 +177,7 @@ TOTAL: 10 (MEDIUM) → Standard guardrails required
 
 **Debate Trigger:** This step is a **Tier 2 Full Council** debate. The kernel in `agent.md` auto-triggers it. The Builder, Protector, and Scaler roles must weigh in before any architecture is finalized. At Risk Score 11+, this is mandatory on every sub-decision.
 
-**Orchestration Layer (New for 2026):**
+**Orchestration Layer (Multi-Agent Coordination):**
 Agents rarely work alone. You must explicitly design how they coordinate:
 * **Sequential Pipeline (CrewAI):** Use this when tasks are strictly ordered. Agent A gathers data -> Agent B summarizes -> Agent C formats.
 * **State Graph (LangGraph):** Use this when tasks require loops or reflection. Agent A writes code -> Agent B tests it -> If fail, loop back to Agent A.

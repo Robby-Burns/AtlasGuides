@@ -26,8 +26,8 @@ This file teaches you to manage Python dependencies correctly so:
 
 - [The Golden Rule](#-the-golden-rule)
 - [File Structure](#-file-structure)
-- [The 2026 Standard: uv](#-the-2026-standard-using-uv)
-- [Essential Dependencies](#-essential-dependencies-for-2026)
+- [The Current Standard: uv](#-the-current-standard-using-uv)
+- [Essential Dependencies](#-essential-dependencies)
 - [Agnostic Orchestration Extras](#-agnostic-orchestration-extras)
 - [Docker Integration](#-docker-integration)
 - [pyproject.toml Configuration](#-projecttoml-configuration)
@@ -64,7 +64,7 @@ Allows security updates   No surprises in production
 
 ---
 
-## 🛠️ The 2026 Standard: Using `uv`
+## 🛠️ The Current Standard: Using `uv`
 
 ### Why `uv` Over pip?
 
@@ -98,7 +98,12 @@ uv pip install -r requirements-lock.txt
 
 ---
 
-## 📋 Essential Dependencies for 2026
+## 📋 Essential Dependencies
+
+> **Validate at time of use.** The packages below were current best practice when this
+> file was last edited. Before adding any of them, run Phase 2 RESEARCH (per `agent.md`)
+> to confirm each is still the recommended choice for your project's current date.
+> The AI assistant is responsible for this check — it cannot be skipped.
 
 ### Core Application
 ```text

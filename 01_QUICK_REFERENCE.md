@@ -46,7 +46,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 
 Before jumping to distributed workers, decide how your agents collaborate in memory.
 
-| Your Workflow Type | Recommended Orchestrator | Why in 2026? |
+| Your Workflow Type | Recommended Orchestrator | Why |
 | :--- | :--- | :--- |
 | **Linear / Simple RAG** | Simple Async / Custom Python | No overhead. Fast execution. |
 | **Role-Playing Teams** | CrewAI | Best for sequential, hierarchical task delegation (e.g., Researcher -> Analyst -> Writer). |
