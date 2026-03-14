@@ -1,6 +1,6 @@
 # 🏗️ Infrastructure as Code - Container-First Deployment
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 7/10  
+**Version:** 1.6.0 | **Updated:** March 13, 2026 | **Part:** 7/10  
 **Status:** Production Ready ✅  
 **Purpose:** Define reproducible, version-controlled cloud infrastructure using Containers and Terraform.
 
@@ -193,6 +193,7 @@ resource "google_cloud_run_service" "agent" {
 
 ### Before Production Deployment
 
+- [ ] **Pre-Deploy Scan:** Run `/deploy-scan` — all 5 layers clean, Issue Map empty. *(See `agent.md` — Deploy Error Protocol)*
 - [ ] **Docker Run Test:** Does `docker compose up` work cleanly on a fresh machine?
 - [ ] **Secret Audit:** Are all API keys in the Secret Manager (not `.env`)?
 - [ ] **Kill Switch:** Do I know exactly how to sever the network connection?
@@ -212,19 +213,27 @@ Why this is in the deployment checklist and not just the audit docs: If you depl
 
 ### Troubleshooting Deployment
 
-If a deployment fails, check in this exact order:
+If a deployment fails, do not debug ad hoc. Use the **Deploy Error Protocol** in `agent.md` (Directive 4).
 
-1. **Local Docker:** Does it run locally? (If no, fix it there).
-2. **Environment Variables:** Did you forget to set a new key in the Cloud Dashboard?
-3. **Logs:** "Container failed to start" usually means a missing dependency or immediate crash.
-4. **Network:** Can the container reach the database? (Check VPC/Allow-list).
+The protocol runs a structured 5-layer parallel scan, builds a dependency-ordered Issue Map, and requires human approval before any fix is applied. This prevents the most common failure mode: fixing the visible error while deeper root causes remain hidden, causing the next deploy to fail on a different symptom.
+
+**To start:** tell the AI "deploy failed" and it will activate the protocol automatically. Or run `/deploy-scan` manually before deploying to catch issues proactively.
+
+The 5 layers the scan covers, in dependency order:
+1. Config & env vars — everything else reads from here
+2. Dependency versions — needs correct config to resolve
+3. DB migrations — needs correct deps + config to run
+4. Docker / containers — needs all of the above
+5. Environment parity — final verification across all layers
+
+Each layer is owned by a specific role. Checklists and report formats are in the corresponding role skill files.
 
 ---
 
 ## 📌 File Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 13, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 

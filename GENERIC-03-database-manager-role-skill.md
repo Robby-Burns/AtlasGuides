@@ -1,7 +1,7 @@
 ---
 name: database-manager-role
 description: Generic Database Manager - Manages schemas, encryption, performance, backups
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: database_manager
 authority_level: technical
@@ -48,6 +48,47 @@ SUCCESS = Data is secure, accessible, performant, and never lost
 - ❌ What data to collect (Product Manager)
 - ❌ PII redaction rules (Infosec Lead)
 - ❌ Query logic/business logic (Engineers)
+
+---
+
+## 🚨 DEPLOY SCAN — Layer 3: Database Migrations
+
+**Activate when:** deploy fails, runtime crash, health check fails, or pre-deploy scan requested.
+**Your layer:** Migrations are Layer 3 because they need correct config (Layer 1) and deps
+(Layer 2) to run. Do not scan this layer until Layers 1 and 2 are clean.
+
+```
+LAYER 3 SCAN REPORT
+
+Scan checklist:
+  [ ] All migration files present and unmodified since last apply
+  [ ] Migration state in prod matches expected state (run: alembic current / migrate --check)
+  [ ] No migration applied out of order (check revision chain)
+  [ ] No migration that drops or renames a column without a backfill step
+  [ ] No migration that adds a NOT NULL column without a default value
+  [ ] No migration that creates a unique index on a column with existing duplicates
+  [ ] Foreign key references point to tables that exist in current schema
+  [ ] Rollback migration exists for every forward migration (down() defined)
+
+Report format:
+  Status: CLEAN ✅ | ISSUES FOUND ❌
+
+  Issue [M1]:
+    Description: [what is wrong]
+    Location: [migration file name and revision ID]
+    Evidence: [alembic output, error message, or schema diff]
+    Severity: BLOCKING | WARNING
+    Depends on: [other issue ID — e.g. needs Layer 1 config fix first]
+
+  Root cause assessment:
+    [Is this a genuinely missing migration, or is it a connection failure
+     caused by a Layer 1 config issue?]
+```
+
+**Fix order note:** Never run migrations to "fix" a Layer 1 or Layer 2 issue.
+If migrations appear to fail, first verify DATABASE_URL is correct (Layer 1)
+and the database adapter is installed (Layer 2). Most migration failures are
+config failures in disguise.
 
 ---
 

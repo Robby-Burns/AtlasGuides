@@ -1,6 +1,6 @@
 # 🧠 SYSTEM KERNEL — AI Agent Framework
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026  
+**Version:** 1.6.0 | **Updated:** March 13, 2026  
 **Status:** Production Ready ✅  
 **Applies to:** All AI coding tools (Cursor, Claude Code, Gemini/Antigravity, Windsurf)  
 **Location:** Project root as `agent.md`. Symlinked/copied to `.cursorrules` and `CLAUDE.md`.
@@ -53,6 +53,29 @@ Immediately after making a change, fixing a bug, or making an architectural deci
 - Built a feature or changed a file? Update "Current State" and "Recent Changes" in `.build-context.md`.
 - Approved an audit item? Log it in "Audit History" in `.build-context.md`.
 
+--- PRE-DEPLOY SCAN (mandatory before Phase 5) ---
+
+Before proceeding to Phase 5 (Deploy), run a proactive deploy scan:
+
+1. Each role scans their layer in parallel:
+     Layer 1 — DevOps Manager  : config & env vars
+     Layer 2 — Architect       : dependency versions
+     Layer 3 — Database Manager: migrations
+     Layer 4 — AI Engineer     : Docker / containers
+     Layer 5 — QA Engineer     : environment parity
+
+2. AI Engineer (Sequencer) builds Issue Map from all scan reports.
+
+3. If Issue Map is EMPTY → proceed to Phase 5. ✅
+
+4. If Issue Map has BLOCKING issues → resolve all before Phase 5.
+   Follow the DEPLOY ERROR PROTOCOL in Directive 4 below.
+
+5. If Issue Map has WARNING issues only → surface to human, proceed
+   with explicit approval.
+
+Skipping this scan is a protocol violation.
+
 **PHASE 5: RECOGNIZE & PROPOSE SKILLS (Continuous)**
 Watch for repeating patterns. A pattern qualifies as a skill candidate when:
 - You've written the same adapter/factory/scaffold pattern **3+ times**.
@@ -75,7 +98,67 @@ If you don't know the score, ask: "What is the Risk Score for this agent? I need
 
 **Rule 2: KISS Constraint.** Before building complex solutions, ask: "Can this be a 5-line script?" If a simple solution works, the complex one is forbidden.
 
-**Rule 3: The 8-Step Debugging Protocol.** When a bug is found: Find → Reproduce → Prove (Repro) → Root Cause → Fix → Test → Regression Check → Prove (Fix). No skipping steps.
+**Rule 3: Error & Debug Routing.** When an error occurs, route it before acting:
+
+```
+Error mentions "deploy", "container", "migration", "env var", or "prod"?
+  → Use the DEPLOY ERROR PROTOCOL (below).
+
+All other errors (feature bugs, test failures, logic errors)?
+  → Use the AI Engineer 7-Step Troubleshooting Protocol.
+```
+
+--- DEPLOY ERROR PROTOCOL ---
+
+Activate when: deploy command fails, app crashes post-deploy,
+               health check fails, or pre-deploy scan triggered.
+
+STEP 1 — PARALLEL SCAN
+  All 5 roles scan their layer simultaneously.
+  Each produces a scan report (format defined in their role skill).
+  Layer ownership:
+    DevOps Manager   → Layer 1: config & env vars
+    Architect        → Layer 2: dependency versions
+    Database Manager → Layer 3: migrations
+    AI Engineer      → Layer 4: Docker / containers
+    QA Engineer      → Layer 5: environment parity
+
+STEP 2 — ISSUE MAP
+  AI Engineer (Sequencer) consolidates all scan reports.
+  Assigns IDs: C# = config, D# = deps, M# = migration,
+               K# = container, E# = parity
+  Maps which issues block which other issues.
+  Determines fix order: root causes first, symptoms last.
+
+STEP 3 — PAUSE FOR APPROVAL ⛔
+  Present the full Issue Map to the human.
+  Do not fix anything until approval is received.
+  Human may approve, reorder, or remove items.
+
+STEP 4 — SEQUENTIAL FIXES
+  Fix each approved issue in order using the 7-step protocol.
+  Proof required on steps 3 (reproduced) and 7 (fixed).
+  If a fix reveals a new issue not in the map → STOP.
+  Re-scan that layer, update the map, return to Step 3.
+
+STEP 5 — SKEPTIC CHECK
+  QA Engineer lists all files touched this session.
+  Checks adjacent files for regression.
+  Runs full test suite.
+  If clean → update .bugs_tracker.md → deploy ready. ✅
+  If regression found → add to map, fix, repeat Step 5.
+
+--- AI ENGINEER 7-STEP TROUBLESHOOTING PROTOCOL ---
+
+For all non-deploy errors. No skipping steps. Proof required on steps 3 and 7.
+
+  1. Find the problem: Identify the exact file, line, function, or module failing.
+  2. Reproduce the problem: Write a failing test or run the command that triggers it.
+  3. Prove you reproduced it: Output the exact stack trace, error, or failed assertion.
+  4. Find the root cause: Explain *why* the failure is happening based on evidence.
+  5. Fix: Implement the specific code change to resolve the root cause.
+  6. Test: Run the test suite or failing command again against the fix.
+  7. Prove it is fixed: Output the successful console log, passing test, or validated artifact.
 
 ---
 
@@ -213,6 +296,7 @@ These commands are available in any AI coding tool. The human types them, and th
 | `/debate [topic]` | Triggers a Tier 3 Full Council debate on any topic. Human confirms verdict. |
 | `/status` | Reads `.build-context.md` and `AgentSpec.md`. Gives a summary of current state, what we're building, active bugs, available skills, and upcoming audit. |
 | `/phase-check` | Evaluates which project phase we're in and whether all prerequisites for the next phase are met. Triggers Tier 2 debate on phase transition. |
+| `/deploy-scan` | Manually triggers the pre-deploy scan across all 5 layers. Produces Issue Map. Use before any deployment or when a deploy error occurs. |
 
 ---
 
@@ -234,6 +318,10 @@ AI context windows are finite. Do not dump all files into every prompt.
 - `07_CONFIGURATION_CONTROL.md` — scale.yaml changes
 - `08_AGNOSTIC_FACTORIES.md` — Refactoring, swapping, new factories
 - `09_AUDIT_AND_MAINTENANCE.md` — Maintenance and audits
+
+**Load for deploy errors (when deploy protocol activates):**
+- Role skill for each layer owner (DevOps, Architect, DB Manager, AI Engineer, QA Engineer)
+- Each skill's DEPLOY SCAN section contains the checklist and report format for that layer.
 
 **Rule:** If the AI needs to cite a file it hasn't loaded, it loads it first, then cites it. No citing from memory.
 
@@ -282,9 +370,13 @@ When `agent.md` is updated, run `./scripts/sync-kernel.sh` to propagate everywhe
 
 ## 📌 Kernel Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 13, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 **Maintained by:** Team Lead or designated framework owner  
 **Audit frequency:** Reviewed every bi-annual audit cycle (Layer 3 of `09_AUDIT_AND_MAINTENANCE.md`)
+
+**Changelog:**
+- v1.6.0 — Added Deploy Debug Council protocol. Pre-deploy scan added to Phase 4→5 transition. Deploy Error Protocol added to Directive 4. Error routing rule replaces generic 8-step reference. `/deploy-scan` command added. Deploy layer context loading added.
+- v1.5.0 — Initial production release.

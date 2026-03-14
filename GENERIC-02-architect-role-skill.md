@@ -1,7 +1,7 @@
 ---
 name: architect-role
 description: Generic Architect - Enforces patterns, prevents vendor lock-in, owns technical decisions
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: architect
 authority_level: technical
@@ -47,6 +47,45 @@ SUCCESS = System is flexible, maintainable, not locked into vendors
 - ❌ Specific feature priorities (Product Manager decides)
 - ❌ Brand rules (Marketing Manager decides)
 - ❌ Deployment platform choice (IT/DevOps decides)
+
+---
+
+## 🚨 DEPLOY SCAN — Layer 2: Dependency Versions
+
+**Activate when:** deploy fails, runtime crash, health check fails, or pre-deploy scan requested.
+**Your layer:** Dependencies are Layer 2 because they need correct config (Layer 1) to resolve.
+Do not scan this layer until Layer 1 (DevOps Manager) is clean.
+
+```
+LAYER 2 SCAN REPORT
+
+Scan checklist:
+  [ ] pyproject.toml / requirements.txt / package.json present and valid
+  [ ] Lock file (uv.lock, poetry.lock, package-lock.json) committed and in sync
+  [ ] No unpinned dependencies (no "*" or "latest" version specs)
+  [ ] No conflicting transitive dependencies (run: pip check / npm ls)
+  [ ] Python / Node / runtime version matches prod environment
+  [ ] No dependency removed that is still imported in code
+  [ ] All packages installable in prod environment (not dev-only extras)
+  [ ] No local file path dependencies (e.g. "../local-lib")
+
+Report format:
+  Status: CLEAN ✅ | ISSUES FOUND ❌
+
+  Issue [D1]:
+    Description: [what is wrong]
+    Location: [exact file and line or package name]
+    Evidence: [version conflict message, import error, or pip check output]
+    Severity: BLOCKING | WARNING
+    Depends on: [other issue ID if applicable]
+
+  Root cause assessment:
+    [Is this a root cause, or is it caused by a config issue in Layer 1?]
+```
+
+**Fix order note:** Layer 2 issues must be fixed before Layer 4 (Docker/containers).
+A pydantic version mismatch will cause the container to crash at startup — fixing the
+container without fixing the dependency first just moves the error.
 
 ---
 

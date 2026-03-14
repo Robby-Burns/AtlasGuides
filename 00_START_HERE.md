@@ -1,6 +1,6 @@
 # 🚀 START HERE - AI Agent Framework Documentation
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 1/10 of Framework  
+**Version:** 1.6.0 | **Updated:** March 13, 2026 | **Part:** 1/10 of Framework  
 **For:** AI Coding Assistants (Cursor/Claude Code/Antigravity) + You  
 **Status:** Production Ready ✅  
 **Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • 2026-compliant • 30-50% faster builds • 80%+ code reuse)
@@ -23,7 +23,7 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 ## 🗺️ Quick Navigation
 
 - [30-Second Quick Start](#-30-second-quick-start)
-- [What's New in v1.5.0](#-whats-new-in-v150)
+- [What's New in v1.6.0](#-whats-new-in-v160)
 - [The Risk Scoring Decision Tree](#-the-risk-scoring-decision-tree-0-17-scale)
 - [Framework Files Overview](#-framework-files-overview-1-10-docs)
 - [Platform Deployment Matrix](#-platform-deployment-matrix)
@@ -41,6 +41,17 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 6. Set `audit.notification_channel` in `scale.yaml` before first deploy (see `09_AUDIT_AND_MAINTENANCE.md`).
 
 **New team member?** Read `TEAM_ONBOARDING.md` first — it covers everything in 15 minutes.
+
+---
+
+## 🆕 What's New in v1.6.0
+
+- **Deploy Debug Council:** Solves the deployment death march — where bugs are fixed in visibility order instead of dependency order, causing repeated redeploy cycles. The council runs a parallel 5-layer scan (config → deps → migrations → containers → parity) on every deploy failure, builds a dependency-ordered Issue Map, and requires human approval before any fix is applied. Protocol lives in `agent.md`; layer checklists live in each role skill.
+- **Pre-Deploy Scan:** Embedded in the Phase 4→5 transition in `agent.md`. All 5 roles scan proactively before every deploy, not just after failure.
+- **Deploy Error Routing:** `agent.md` Directive 4 now contains an explicit routing rule — deploy-related errors go to the Deploy Error Protocol; all other errors go to the AI Engineer 7-Step Protocol. No ambiguity about which path to follow.
+- **`/deploy-scan` Command:** Manually triggers the pre-deploy scan. Added to the standardized commands table in `agent.md`.
+- **Deploy Session Logging:** `.bugs_tracker.md` template in `05_BUILD_CONTEXT_AND_BUGS.md` now includes a Deploy Session Log section so council runs are remembered across sessions.
+- **Deployment Checklist Updated:** `06_INFRASTRUCTURE_AS_CODE.md` Troubleshooting section now routes to the Deploy Error Protocol instead of its own informal 4-step list.
 
 ---
 
@@ -90,7 +101,7 @@ Before writing any code, you must score your agent.
 
 | File | What it is |
 | :--- | :--- |
-| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law. Synced to all tools. |
+| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law, deploy error protocol. Synced to all tools. |
 | `TEAM_ONBOARDING.md` | 15-minute onboarding guide for new team members. |
 | `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. |
 | `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. |
@@ -100,7 +111,7 @@ Before writing any code, you must score your agent.
 
 ## 📌 Version & Status
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 13, 2026  
 **Status:** Production Ready ✅  
 **Next File:** [01_QUICK_REFERENCE.md](./01_QUICK_REFERENCE.md)

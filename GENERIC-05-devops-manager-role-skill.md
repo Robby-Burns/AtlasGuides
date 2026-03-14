@@ -1,7 +1,7 @@
 ---
 name: devops-manager-role
 description: Generic DevOps Manager - Manages deployment, costs, uptime, reliability
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: devops_manager
 authority_level: operations
@@ -43,6 +43,43 @@ SUCCESS = Reliable, affordable, maintainable infrastructure
 **You Don't Decide:**
 - ❌ Application logic (Engineers)
 - ❌ Database schema (Database Manager)
+
+---
+
+## 🚨 DEPLOY SCAN — Layer 1: Config & Env Vars
+
+**Activate when:** deploy fails, runtime crash, health check fails, or pre-deploy scan requested.
+**Your layer:** Config is Layer 1 because everything else reads from it. Fix here first.
+
+```
+LAYER 1 SCAN REPORT
+
+Scan checklist:
+  [ ] All required env vars present in target environment
+  [ ] No env var pointing to localhost or local path in prod
+  [ ] scale.yaml / config file loads without schema errors
+  [ ] Secrets exist in cloud secret manager (not in code or .env committed)
+  [ ] No env var value is empty string when non-empty required
+  [ ] Config values match expected types (string, int, bool)
+  [ ] Environment name correct (staging vs prod not swapped)
+
+Report format:
+  Status: CLEAN ✅ | ISSUES FOUND ❌
+
+  Issue [C1]:
+    Description: [what is wrong]
+    Location: [exact file, key, or secret name]
+    Evidence: [missing value, wrong value, or error message]
+    Severity: BLOCKING | WARNING
+    Depends on: [other issue ID if fixing this requires fixing something else first]
+
+  Root cause assessment:
+    [Is this a root cause or a symptom of something deeper?]
+```
+
+**Fix order note:** Layer 1 issues are always fixed before any other layer.
+A DATABASE_URL missing from prod will cause Layer 3 (migrations) and Layer 5 (parity) to
+also fail. Fix the config, then re-scan those layers — do not fix them independently.
 
 ---
 

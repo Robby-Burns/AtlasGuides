@@ -1,6 +1,6 @@
 # 🧠 Build Context & Bug Tracking - AI Project Memory
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 6/10  
+**Version:** 1.6.0 | **Updated:** March 13, 2026 | **Part:** 6/10  
 **Status:** Production Ready ✅  
 **Purpose:** Give AI Coding Assistants project memory to prevent repeated bugs and architecture drift.
 
@@ -12,9 +12,9 @@ AI Coding Assistants (Cursor, Windsurf, Claude Code, Antigravity) have **zero me
 
 To solve this, we use two files that the **AI is responsible for reading and updating**:
 1. **`.build-context.md`** — Project state, recent changes, architecture, audit history.
-2. **`.bugs_tracker.md`** — Active bugs, patterns, root causes.
+2. **`.bugs_tracker.md`** — Active bugs, patterns, root causes, and deploy session logs.
 
-**Core Rule:** The AI must manage its own memory through a strict "Read -> Act -> Update" loop (enforced via `agent.md` in File `04`).
+**Core Rule:** The AI must manage its own memory through a strict "Read -> Act -> Update" loop (enforced via `agent.md`).
 
 ---
 
@@ -136,6 +136,7 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 ---
 
 ## 🚨 Active Bugs
+
 ### BUGS-001: MCP Connection Timeout
 **Status:** Active | **Severity:** Major  
 **Description:** Agent fails to connect to `mcp-filesystem` on initial startup.
@@ -155,14 +156,49 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 **Occurrences:** 1 time (External Search Tool)
 **Root cause:** Parallel agent execution triggered 429 errors.
 **Solution:** Implemented the Token Bucket algorithm in the `RateLimiter` middleware.
+
+---
+
+## 🚀 Deploy Session Log
+*(AI: After every Deploy Error Protocol run, add an entry here. This is the memory of what was found, what was fixed, and what to watch for next time.)*
+
+### DEPLOY-[DATE]: [brief description e.g. "prod crash on migration"]
+
+**Trigger:** [What caused the scan — deploy failure / pre-deploy scan / health check]  
+**Environment:** [staging / prod]
+
+**Issue Map (what was found):**
+| ID | Layer | Description | Severity | Root cause or symptom? |
+|----|-------|-------------|----------|------------------------|
+| C1 | Config | DATABASE_URL missing in prod | BLOCKING | Root cause |
+| M1 | Migration | Migration 004 failed — no DB connection | BLOCKING | Symptom of C1 |
+
+**Fix order applied:** C1 → M1  
+**Human approved:** [YES / NO — if NO, explain why it was skipped]
+
+**Files touched this session:**
+- `config/.env.prod`
+- `alembic/versions/004_add_sessions_table.py`
+
+**Skeptic check result:** PASS ✅ / FAIL ❌  
+**Regressions found:** [None / describe if any]  
+**Test suite result:** [PASS / FAIL]
+
+**Recurring pattern?**
+*(AI: If this is the 2nd+ time this type of issue appeared in deploy scans, flag it here.)*
+- [ ] Yes — consider automating this check in CI (see `agent.md` Phase 5: Recognize & Propose Skills)
+- [ ] No — first occurrence
+
+**Notes for next session:**
+[Anything the next session should know — e.g., "Layer 1 scan will show a warning about REDIS_URL until ticket #42 is resolved — expected, not blocking"]
 ```
 
 ---
 
 ## 📌 File Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 13, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 
