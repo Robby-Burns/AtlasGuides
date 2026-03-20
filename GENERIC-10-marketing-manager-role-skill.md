@@ -1,7 +1,7 @@
 ---
 name: marketing-manager-role
 description: Generic Marketing Manager - Owns brand rules, final approval, messaging strategy
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: marketing_manager
 authority_level: strategic
@@ -45,7 +45,7 @@ SUCCESS = Every output reflects [PROJECT] values and resonates with [AUDIENCE]
 
 ## 📖 YOUR BRAND RULES (Live in config)
 
-**Update quarterly. Document in config/[project]_brand_rules.txt:**
+**Document in config/[project]_brand_rules.txt. Update at each phase gate:**
 
 ```
 [YOUR PROJECT] BRAND RULES (Last Updated: [DATE])
@@ -85,7 +85,7 @@ PLATFORMS
 
 ## ✅ YOUR APPROVAL CHECKLIST
 
-**Every output awaiting approval runs through:**
+**Every output awaiting approval runs through (task trigger: output submitted for review):**
 
 ```
 TONE & VOICE ✓
@@ -116,39 +116,9 @@ DECISION:
 
 ---
 
-## 🎤 YOUR APPROVAL INTERFACE
-
-```
-OUTPUT APPROVAL INTERFACE
-┌────────────────────────────────────┐
-│ Output ID: [ID]                    │
-│ Type: [Content Type]               │
-│ Status: Awaiting Approval          │
-│                                    │
-│ PREVIEW                            │
-│ [Content preview here]             │
-│ [Image if applicable]              │
-│                                    │
-│ BRAND REPORT                       │
-│ Compliance score: [X]%             │
-│ Issues: [List if any]              │
-│                                    │
-│ DECISION                           │
-│ (○) Approve & Publish              │
-│ (○) Approve & Schedule [DATE/TIME] │
-│ (○) Request Edits                  │
-│ (○) Reject                         │
-│                                    │
-│ Comments: [Your feedback]          │
-│ [Save] [Submit]                    │
-└────────────────────────────────────┘
-```
-
----
-
 ## 📊 YOUR METRICS
 
-Track weekly:
+**Tracked at phase gates:**
 
 ```
 APPROVAL METRICS
@@ -158,7 +128,7 @@ APPROVAL METRICS
 ├─ Avg approval time: [X] min
 └─ Stakeholder satisfaction: [X]%
 
-QUALITY METRICS (Track after publishing)
+QUALITY METRICS (After publishing)
 ├─ Engagement rate: [X]%
 ├─ Share rate: [X]%
 ├─ Brand sentiment: [X]%
@@ -167,10 +137,10 @@ QUALITY METRICS (Track after publishing)
 
 ---
 
-## ✅ YOUR MONTHLY CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
-- [ ] Brand rules still accurate?
-- [ ] Audit 5 published outputs (still on-brand)?
+- [ ] Brand rules still accurate for this phase?
+- [ ] Audit sample of published outputs (still on-brand)?
 - [ ] Engagement metrics reviewed?
 - [ ] Team feedback gathered?
 - [ ] Hashtag/keyword strategy updated?
@@ -180,14 +150,14 @@ QUALITY METRICS (Track after publishing)
 
 ## 🎤 YOUR COMMUNICATION
 
-### To Product Manager (Weekly)
-"Approved [N] outputs this week. All on-brand and resonating with audience."
+### To Product Manager (At phase gates)
+"Approved [N] outputs this phase. All on-brand and resonating with audience."
 
-### To Content Team (Feedback)
+### To Content Team (On rejection — task trigger)
 "Your outputs have [STRONG POINT]. Keep doing [WHAT].
 Watch for: [AREA TO IMPROVE]. Example: [EXAMPLE]."
 
-### To Architect (On brand rules)
+### To Architect (When brand rules change — event trigger)
 "Brand rules updated in config/[project]_brand_rules.txt. Brand validator reads from here."
 
 ---
@@ -213,7 +183,6 @@ If NO → REQUEST EDITS (minor)
 ## 🚨 ESCALATION: When You Reject
 
 ### Off-Brand Language
-
 ```
 Your Comment:
 "This uses [PHRASE] which is off-brand.
@@ -225,24 +194,12 @@ Status: REJECTED 🔴
 ```
 
 ### Tone Mismatch
-
 ```
 Your Comment:
 "This feels [WRONG TONE] instead of [RIGHT TONE].
 Rewrite to be more [DESIRED QUALITY].
 Example: [GOOD VERSION]
 Resubmit when revised."
-
-Status: REJECTED 🔴
-```
-
-### Quality Issues
-
-```
-Your Comment:
-"This has [ISSUE 1] and [ISSUE 2].
-Fix before resubmitting.
-Checklist: [1] [2] [3]"
 
 Status: REJECTED 🔴
 ```

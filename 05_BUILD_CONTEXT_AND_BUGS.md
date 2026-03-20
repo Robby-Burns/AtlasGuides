@@ -1,6 +1,6 @@
 # 🧠 Build Context & Bug Tracking - AI Project Memory
 
-**Version:** 1.6.0 | **Updated:** March 13, 2026 | **Part:** 6/10  
+**Version:** 1.6.0 | **Updated:** March 19, 2026 | **Part:** 6/10  
 **Status:** Production Ready ✅  
 **Purpose:** Give AI Coding Assistants project memory to prevent repeated bugs and architecture drift.
 
@@ -12,9 +12,11 @@ AI Coding Assistants (Cursor, Windsurf, Claude Code, Antigravity) have **zero me
 
 To solve this, we use two files that the **AI is responsible for reading and updating**:
 1. **`.build-context.md`** — Project state, recent changes, architecture, audit history.
-2. **`.bugs_tracker.md`** — Active bugs, patterns, root causes, and deploy session logs.
+2. **`.bugs_tracker.md`** — Active bugs, patterns, root causes.
 
-**Core Rule:** The AI must manage its own memory through a strict "Read -> Act -> Update" loop (enforced via `agent.md`).
+**Core Rule:** The AI must manage its own memory through a strict "Read -> Act -> Update" loop (enforced via `agent.md` in File `04`).
+
+**Memory Lifecycle:** These files are append-only during active development, but must be periodically archived to prevent context window overflow. See [The Archive Protocol](#-the-archive-protocol-cold-storage) for the rotation lifecycle.
 
 ---
 
@@ -23,6 +25,7 @@ To solve this, we use two files that the **AI is responsible for reading and upd
 - [The AI-First Bookkeeping Workflow](#-the-ai-first-bookkeeping-workflow)
 - [File 1: .build-context.md Template](#-file-1-build-contextmd)
 - [File 2: .bugs_tracker.md Template](#-file-2-bugs_trackermd)
+- [The Archive Protocol (Cold Storage)](#-the-archive-protocol-cold-storage)
 - [Troubleshooting Memory Loss](#-troubleshooting)
 
 ---
@@ -62,6 +65,12 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 - **Feature:** [Current feature name]
 - **Status:** [Started/In Progress/Testing/Blocked]
 - **Blocker:** [What's blocking progress]
+
+### Summary of Past Phases
+*(AI: This section is maintained by the /archive-memory command. It contains compressed summaries of completed phases. Do not delete these entries — they are the only record of archived work.)*
+
+- **Phase 1 (Discovery):** [2-3 sentence summary of key decisions and outcomes]
+- **Phase 2 (Build - Core Agents):** [2-3 sentence summary]
 
 ### Recent Changes (AI-UPDATED)
 - **[DATE]:** Built [feature/component]
@@ -112,6 +121,15 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 
 ---
 
+## 🗄️ Archive History
+*(AI: Add an entry each time /archive-memory is run)*
+
+| Archive Date | File | Phases Covered | Bugs Promoted to Skills |
+|-------------|------|----------------|------------------------|
+| [DATE] | `docs/archive/memory_archive_[DATE].md` | Phase 1-2 | [skill-name] or None |
+
+---
+
 ## 🧩 Skills Registry
 *(AI: Register every reusable skill here. Check this list before writing a new pattern — if a skill already exists, use it.)*
 
@@ -136,7 +154,6 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 ---
 
 ## 🚨 Active Bugs
-
 ### BUGS-001: MCP Connection Timeout
 **Status:** Active | **Severity:** Major  
 **Description:** Agent fails to connect to `mcp-filesystem` on initial startup.
@@ -159,46 +176,120 @@ The AI follows the "Tech Radar -> Factory" pipeline, writes the code, and runs t
 
 ---
 
-## 🚀 Deploy Session Log
-*(AI: After every Deploy Error Protocol run, add an entry here. This is the memory of what was found, what was fixed, and what to watch for next time.)*
+## ✅ Resolved Bugs (Pending Archive)
+*(AI: Resolved bugs live here temporarily. During /archive-memory, move these to the archive file. If a resolved bug reveals a recurring pattern, promote it to a skill BEFORE archiving.)*
 
-### DEPLOY-[DATE]: [brief description e.g. "prod crash on migration"]
-
-**Trigger:** [What caused the scan — deploy failure / pre-deploy scan / health check]  
-**Environment:** [staging / prod]
-
-**Issue Map (what was found):**
-| ID | Layer | Description | Severity | Root cause or symptom? |
-|----|-------|-------------|----------|------------------------|
-| C1 | Config | DATABASE_URL missing in prod | BLOCKING | Root cause |
-| M1 | Migration | Migration 004 failed — no DB connection | BLOCKING | Symptom of C1 |
-
-**Fix order applied:** C1 → M1  
-**Human approved:** [YES / NO — if NO, explain why it was skipped]
-
-**Files touched this session:**
-- `config/.env.prod`
-- `alembic/versions/004_add_sessions_table.py`
-
-**Skeptic check result:** PASS ✅ / FAIL ❌  
-**Regressions found:** [None / describe if any]  
-**Test suite result:** [PASS / FAIL]
-
-**Recurring pattern?**
-*(AI: If this is the 2nd+ time this type of issue appeared in deploy scans, flag it here.)*
-- [ ] Yes — consider automating this check in CI (see `agent.md` Phase 5: Recognize & Propose Skills)
-- [ ] No — first occurrence
-
-**Notes for next session:**
-[Anything the next session should know — e.g., "Layer 1 scan will show a warning about REDIS_URL until ticket #42 is resolved — expected, not blocking"]
+### BUGS-000: [Example Resolved Bug]
+**Status:** Resolved [DATE] | **Severity:** Minor  
+**Resolution:** [What fixed it]  
+**Pattern?:** [Yes → promoted to skill / No]
 ```
+
+---
+
+## 🗄️ The Archive Protocol (Cold Storage)
+
+### The Problem
+
+`.build-context.md` and `.bugs_tracker.md` grow with every session. On a long-running project, they will eventually exceed the AI's useful context window — causing the assistant to lose focus, hallucinate older details, or silently drop important constraints.
+
+### The Solution: Log Rotation for AI Memory
+
+Separate **Active Memory** (what the AI needs right now) from **Cold Storage** (historical record for audits and reference).
+
+### Archive Directory
+
+```text
+docs/
+  archive/
+    memory_archive_2026-03-01.md    # Phase 1 context + resolved bugs
+    memory_archive_2026-06-15.md    # Phase 2 context + resolved bugs
+```
+
+### When to Archive
+
+Archive is triggered by **either** of these conditions:
+
+1. **Threshold:** `.build-context.md` exceeds the line count or token count configured in `scale.yaml` (see `07_CONFIGURATION_CONTROL.md` → `context_management.archive_threshold_lines`).
+2. **Phase transition:** When the project moves to a new phase (Discovery → Build → Test → Deploy → Maintain), archive the completed phase's working notes.
+
+The `/archive-memory` command in `04_AI_ASSISTANT_INTEGRATION.md` executes the routine. You can also trigger it manually at any time.
+
+### The Archive Routine (What the AI Does)
+
+When `/archive-memory` is triggered, the AI executes these steps in order:
+
+**Step 1 — Skill Promotion Check (Before Deletion)**
+Read the "Resolved Bugs (Pending Archive)" section in `.bugs_tracker.md`. For each resolved bug, check: does this reveal a recurring pattern (3+ occurrences)? If yes, the AI **must** propose a `/new-skill` before the bug entry is moved to the archive. Patterns that are archived without becoming skills are lost knowledge.
+
+**Step 2 — Compress & Move**
+The AI reads the oldest completed features, resolved bugs, and historical entries. It writes them into a timestamped archive file at `docs/archive/memory_archive_[DATE].md` with full detail preserved.
+
+**Step 3 — Summarize**
+The AI writes a 2-3 sentence summary per archived phase into the "Summary of Past Phases" section at the top of `.build-context.md`. This summary is the AI's compressed memory — enough to orient itself without reading the full archive.
+
+**Step 4 — Truncate**
+Active files are trimmed to only what is relevant to the current sprint or phase. The "Recent Changes" section keeps only the last 14 days. The "Resolved Bugs (Pending Archive)" section is cleared.
+
+**Step 5 — Verify**
+Start a fresh read of the trimmed `.build-context.md` and confirm the AI can orient itself without referencing the archive.
+
+### What Gets Archived vs. What Stays
+
+| Content | Action |
+|---------|--------|
+| Completed features older than 14 days | Archive |
+| Resolved bugs (after skill promotion check) | Archive |
+| Audit History entries | **Stay** (never archive — compliance record) |
+| Architectural Decisions | **Stay** (never archive — always relevant) |
+| Skills Registry | **Stay** (never archive — active reference) |
+| Summary of Past Phases | **Stay** (compressed memory, always at top) |
+| Active bugs | **Stay** |
+| Current sprint work | **Stay** |
+
+### Archive File Format
+
+```markdown
+# Archive — [PROJECT NAME] — [DATE]
+
+**Archived by:** /archive-memory command  
+**Covers:** Phase [N] ([Start Date] — [End Date])  
+**Skills promoted from this archive:** [skill-name] or None
+
+---
+
+## Completed Features
+[Full detail of completed features moved from .build-context.md]
+
+## Resolved Bugs
+[Full detail of resolved bugs moved from .bugs_tracker.md]
+
+## Notes
+[Any context the AI thought was worth preserving for future reference]
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### AI Keeps Forgetting Context
+**Cause:** Context window exceeded.  
+**Fix:** Run `/archive-memory` to trim the active files. Check if `.build-context.md` exceeds the threshold in `scale.yaml`.
+
+### AI References Archived Details Incorrectly
+**Cause:** The AI is guessing from the compressed summary instead of reading the archive.  
+**Fix:** Say: "Read `docs/archive/memory_archive_[DATE].md` for the full details on that."
+
+### AI Doesn't Update Memory After Session
+**Cause:** Session ended without the update prompt.  
+**Fix:** Always close with: "Update `.build-context.md` with what we built today."
 
 ---
 
 ## 📌 File Meta
 
 **Version:** 1.6.0  
-**Released:** March 13, 2026  
+**Released:** March 19, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 

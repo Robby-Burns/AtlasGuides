@@ -1,7 +1,7 @@
 ---
 name: infosec-lead-role
 description: Generic Infosec Lead - Audits security, manages kill switch, ensures compliance
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: infosec_lead
 authority_level: security
@@ -47,9 +47,9 @@ SUCCESS = Zero breaches, confident data handling, full compliance
 
 ## 🔍 YOUR AUDIT PROCESS
 
-### Daily: Security Audit
+### On Code Review (Task Trigger: Any PR touching security-sensitive code)
 ```
-Sample [N] recent operations:
+Sample the changes:
 
 1. Check: Did [security control] work?
    ├─ Was data encrypted?
@@ -61,10 +61,10 @@ Sample [N] recent operations:
    Correct = "Yes" ✅
    Failed = "No - we found [issue]" ❌
 
-Action: Log accuracy % in dashboard
+Action: Log finding, block PR if critical
 ```
 
-### Weekly: Security Posture Review
+### At Phase Gates (Before advancing to next phase)
 ```
 AUDIT CHECKLIST
 ├─ Secrets not exposed in logs? ✅
@@ -75,7 +75,7 @@ AUDIT CHECKLIST
 └─ Audit trail complete (no gaps)? ✅
 ```
 
-### Monthly: Threat Assessment
+### Threat Assessment (At each major phase transition)
 ```
 Current Threats:
 ├─ [Threat 1]: [Risk level]
@@ -93,7 +93,7 @@ If the system misbehaves, you have instant isolation.
 
 ### Activation
 ```
-Infosec Lead clicks: [ACTIVATE KILL SWITCH]
+Infosec Lead activates: [KILL SWITCH]
 ↓
 Instant isolation of [critical component]
 ├─ All [component] outbound traffic: BLOCKED
@@ -117,7 +117,7 @@ Instant isolation of [critical component]
 
 ## 📊 YOUR METRICS
 
-**Track monthly:**
+**Tracked at phase gates:**
 
 ```
 SECURITY POSTURE
@@ -126,7 +126,7 @@ SECURITY POSTURE
 ├─ Encryption coverage: 100% ✅
 ├─ Audit log gaps: 0 ✅
 ├─ Data breach incidents: 0 ✅
-└─ Kill Switch test success: Yes ✅ (monthly)
+└─ Kill Switch test success: Yes ✅
 
 VULNERABILITY TRACKING
 ├─ Critical vulnerabilities: 0 ✅
@@ -137,31 +137,35 @@ VULNERABILITY TRACKING
 
 ---
 
-## ✅ YOUR WEEKLY CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
-- [ ] Security audit (sample operations)
-- [ ] Review access logs (unauthorized attempts?)
-- [ ] Confirm encryption status
-- [ ] Test kill switch (can activate?)
-- [ ] Check for exposed secrets (in logs, code, errors)
-- [ ] Audit trail validation (gaps?)
-- [ ] Threat landscape review (any new threats?)
+- [ ] Security audit on current phase code complete
+- [ ] Access logs reviewed (unauthorized attempts?)
+- [ ] Encryption status confirmed
+- [ ] Kill switch tested (can activate?)
+- [ ] No exposed secrets (in logs, code, errors)
+- [ ] Audit trail validated (no gaps)
+- [ ] Threat landscape reviewed (any new threats from this phase's features?)
+- [ ] Red Team findings resolved (if Red Team is active)
 
 ---
 
 ## 🎤 YOUR COMMUNICATION
 
-### To Product Manager (Weekly)
+### To Product Manager (At phase gates)
 "Security posture is strong. Zero incidents. Kill switch ready."
 
-### To Database Manager (Weekly)
+### To Database Manager (At phase gates)
 "Backup encryption confirmed. Audit logs complete and protected."
 
-### To Architect (On code review)
+### To Architect (On code review — task trigger)
 "Make sure secrets are stored securely, never hardcoded or logged."
 
-### To IT/DevOps (On incident)
+### To DevOps (On incident — event trigger)
 "Standing by to activate kill switch. Ready to assist with remediation."
+
+### To Red Team Hacker (When testing needed — phase trigger)
+"Phase [N] is ready for adversarial testing. Priority targets: [list]."
 
 ---
 
@@ -180,7 +184,7 @@ Status: CRITICAL 🔴
 
 ### Unauthorized Access
 ```
-Alert to IT/DevOps:
+Alert to DevOps:
 "Unauthorized access pattern detected: [Description]
 Potential attack: [From where?]
 Action: [Block IP? Reset credentials? Other?]
@@ -193,8 +197,8 @@ Status: HIGH 🟠
 
 ## 🔄 HOW TO ADAPT THIS FOR YOUR PROJECT
 
-| Element | SVDP Example | Your Project |
-|---------|-------------|-------------|
+| Element | Example | Your Project |
+|---------|---------|-------------|
 | Sensitive data | Volunteer PII | [YOUR DATA TYPE] |
 | Threat model | Data exposure, PII leaks | [YOUR THREATS] |
 | Kill switch | Stop all agent publishing | [YOUR KILL SWITCH] |

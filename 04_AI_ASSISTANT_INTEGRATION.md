@@ -1,6 +1,6 @@
 # 🤖 AI Assistant Integration - Tool-Agnostic Workflows
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 5/10  
+**Version:** 1.6.0 | **Updated:** March 19, 2026 | **Part:** 5/10  
 **Status:** Production Ready ✅  
 **Purpose:** How to configure and interact with AI coding assistants (Cursor, Windsurf, Claude Code, Antigravity) so they follow this framework.
 
@@ -63,7 +63,7 @@ Your team uses multiple AI tools. Each tool reads its rules from a different loc
 ### File Mapping
 
 | AI Tool | What It Reads | Setup Method |
-|---------|--------------|--------------|
+|---------|--------------|--------------| 
 | **Cursor** | `.cursorrules` at project root | Auto-synced via `sync-kernel.sh` |
 | **Claude Code** | `CLAUDE.md` at project root | Auto-synced via `sync-kernel.sh` |
 | **Windsurf** | `.windsurfrules` at project root | Auto-synced via `sync-kernel.sh` |
@@ -222,6 +222,8 @@ Because AI context windows are finite, do not dump all framework files into ever
 
 **Citation Law enforces this:** If the AI needs to cite a file it hasn't loaded, it must load it first, then cite it. No citing from memory.
 
+**Context Window Health:** If the AI starts losing track of decisions made earlier in the session, or begins hallucinating details from previous phases, the active memory files are too large. Run `/archive-memory` (see below) to rotate old entries into cold storage.
+
 ---
 
 ## 🚫 Enforcing the Risk Score
@@ -265,6 +267,19 @@ Triggers a Tier 2 debate on the swap decision.
 ### `/run-audit`
 
 > "Run the bi-annual audit process. Read `09_AUDIT_AND_MAINTENANCE.md` for the full procedure. Check dependencies, API contracts, framework guide recommendations, and skills. Generate the report at `docs/audits/AUDIT_REPORT_[DATE].md` and notify via the configured channel."
+
+### `/archive-memory`
+
+> "Our context files are getting too long. Please:
+> 1. Read `.build-context.md` and `.bugs_tracker.md`.
+> 2. Check all resolved bugs in the 'Resolved Bugs (Pending Archive)' section. If any represent a recurring pattern (3+ occurrences), propose a `/new-skill` before archiving.
+> 3. Move all completed features and resolved bugs older than 14 days into `docs/archive/memory_archive_[DATE].md`.
+> 4. Write a 2-3 sentence summary per archived phase into the 'Summary of Past Phases' section at the top of `.build-context.md`.
+> 5. Trim the active files to only current sprint work.
+> 6. Log the archive event in the 'Archive History' table in `.build-context.md`.
+> 7. Verify: Re-read the trimmed `.build-context.md` and confirm you can orient yourself without the archive."
+
+**When to use:** Run this when the AI starts losing focus mid-session, when `.build-context.md` exceeds the threshold configured in `scale.yaml`, or at any phase transition. See `05_BUILD_CONTEXT_AND_BUGS.md` for the full archive protocol.
 
 ### `/new-skill [pattern-name]`
 
@@ -345,7 +360,7 @@ The `description` field is critical — Antigravity uses it to decide when to lo
 
 ### Skill Lifecycle
 
-1. **Identify:** AI proposes during Phase 5 of the 5-Phase Loop.
+1. **Identify:** AI proposes during Phase 5 of the 5-Phase Loop, or during `/archive-memory` when a resolved bug pattern is detected.
 2. **Create:** Use the `/new-skill` prompt pattern. AI writes the skill, test, and `SKILL.md`. Triggers Tier 2 debate.
 3. **Register:** AI adds the skill to the Skills Registry in `.build-context.md`.
 4. **Use:** AI invokes the skill by name in future sessions instead of rewriting the pattern.
@@ -359,6 +374,7 @@ The `description` field is critical — Antigravity uses it to decide when to lo
 |---------|----------|----------|
 | AI hardcodes OpenAI API calls | Default training bias | Point it to `08_AGNOSTIC_FACTORIES.md` and say "Use the LLM Factory." |
 | AI forgets previous decisions | Context window pushed out | Say: "Read `.build-context.md` to refresh your memory." |
+| AI loses focus mid-session | Active memory files too large | Run `/archive-memory` to rotate old entries into cold storage. |
 | AI writes monolithic code | Lazy generation | Say: "Refactor this into the Modular Monolith structure defined in `02_COMPLETE_GUIDE.md`." |
 | AI installs random libraries | Pip hallucination | Say: "Check `pyproject.toml` and use `uv` for dependency management." |
 | AI skips audit maintenance | No awareness of Step 8 | Say: "Read `09_AUDIT_AND_MAINTENANCE.md` and follow the audit checklist." |
@@ -371,8 +387,8 @@ The `description` field is critical — Antigravity uses it to decide when to lo
 
 ## 📌 File Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 19, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 

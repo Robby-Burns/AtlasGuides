@@ -46,46 +46,9 @@ SUCCESS = Reliable, affordable, maintainable infrastructure
 
 ---
 
-## 🚨 DEPLOY SCAN — Layer 1: Config & Env Vars
-
-**Activate when:** deploy fails, runtime crash, health check fails, or pre-deploy scan requested.
-**Your layer:** Config is Layer 1 because everything else reads from it. Fix here first.
-
-```
-LAYER 1 SCAN REPORT
-
-Scan checklist:
-  [ ] All required env vars present in target environment
-  [ ] No env var pointing to localhost or local path in prod
-  [ ] scale.yaml / config file loads without schema errors
-  [ ] Secrets exist in cloud secret manager (not in code or .env committed)
-  [ ] No env var value is empty string when non-empty required
-  [ ] Config values match expected types (string, int, bool)
-  [ ] Environment name correct (staging vs prod not swapped)
-
-Report format:
-  Status: CLEAN ✅ | ISSUES FOUND ❌
-
-  Issue [C1]:
-    Description: [what is wrong]
-    Location: [exact file, key, or secret name]
-    Evidence: [missing value, wrong value, or error message]
-    Severity: BLOCKING | WARNING
-    Depends on: [other issue ID if fixing this requires fixing something else first]
-
-  Root cause assessment:
-    [Is this a root cause or a symptom of something deeper?]
-```
-
-**Fix order note:** Layer 1 issues are always fixed before any other layer.
-A DATABASE_URL missing from prod will cause Layer 3 (migrations) and Layer 5 (parity) to
-also fail. Fix the config, then re-scan those layers — do not fix them independently.
-
----
-
 ## 💰 YOUR COST CONTROL
 
-### Monthly Budget: $[YOUR BUDGET]
+### Budget: $[YOUR BUDGET]
 
 ```
 Component Budgets:
@@ -102,19 +65,17 @@ OPTIMIZATION LEVERS (if over budget):
 └─ [Lever 4]: Saves $[X]
 ```
 
-### Cost Monitoring
+### Cost Monitoring (Threshold-Based Alerts)
 ```
-Daily email:
-"Your estimated bill: $[X] (trending toward $[Y]/month)"
+Alert at 80% of budget:
+"Estimated bill: $[X] (trending toward $[Y])"
 
-Weekly review:
-[Your platform] cost show --period=week
-Shows: [Component 1] $[X], [Component 2] $[X], etc
+Alert at 100% of budget:
+"Budget exceeded. Cost driver: [Component]. Action: [Optimization]."
 
-If trending over budget:
-1. Identify cost driver
-2. Implement optimization
-3. Re-check in 24 hours
+At phase gates:
+[Your platform] cost show --period=[current_phase]
+Shows: [Component 1] $[X], [Component 2] $[X], etc.
 ```
 
 ---
@@ -147,7 +108,7 @@ If deployment breaks production:
    [Your platform] deploy --rollback-to=[previous-version]
    
 2. Time: <2 minutes
-3. Notify: Slack #incidents
+3. Notify: Team via configured channel
 4. Investigate: Why did it break?
 5. Fix: Patch and redeploy
 ```
@@ -156,14 +117,14 @@ If deployment breaks production:
 
 ## 📊 YOUR MONITORING DASHBOARD
 
-**Track continuously:**
+**Tracked continuously (automated) and reviewed at phase gates:**
 
 ```
 INFRASTRUCTURE HEALTH
 ├─ API Uptime: [X]% (target: >[Y]%)
 ├─ [Component 1] Uptime: [X]%
-├─ Deployment Failures: [N] this month
-├─ Rollbacks: [N] this month
+├─ Deployment Failures: [N] this phase
+├─ Rollbacks: [N] this phase
 └─ MTTR (Mean Time to Recover): <[X] min
 
 PERFORMANCE
@@ -174,7 +135,7 @@ PERFORMANCE
 └─ Timeout Rate: [X]% (target: <[Y]%)
 
 COSTS
-├─ Projected Monthly: $[X] (budget: $[Y])
+├─ Current spend: $[X] (budget: $[Y])
 ├─ [Component 1] Overage: $[X] or ✅
 ├─ [Component 2] Overage: $[X] or ✅
 └─ [Component 3] Overage: $[X] or ✅
@@ -189,24 +150,24 @@ CAPACITY
 
 ---
 
-## ⚠️ YOUR ALERTING RULES
+## ⚠️ YOUR ALERTING RULES (Automated Threshold Triggers)
 
 ```
 CRITICAL ALERTS (Page on-call):
 ├─ [Component] down >1 minute
 ├─ Data loss detected
 ├─ Security breach suspected
-└─ Cost >$[2x budget]
+└─ Cost >2x budget
 
-HIGH ALERTS (Slack #incidents):
+HIGH ALERTS (Team notification):
 ├─ Error rate >[Threshold]%
 ├─ Response time >[Threshold]ms (p95)
-├─ Deployment rollback
-├─ Cost >[Threshold]
+├─ Deployment rollback triggered
+├─ Cost >[Budget threshold]
 └─ CPU >[Threshold]% sustained
 
-MEDIUM ALERTS (Slack #monitoring):
-├─ Cost trending >[Threshold]
+MEDIUM ALERTS (Logged, review at phase gate):
+├─ Cost trending over budget
 ├─ Slow operation detected
 ├─ Backup missed
 └─ Low disk space
@@ -214,54 +175,54 @@ MEDIUM ALERTS (Slack #monitoring):
 
 ---
 
-## ✅ YOUR WEEKLY CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
-- [ ] Deployment dashboard: All good?
-- [ ] Cost dashboard: On budget?
+- [ ] Deployment dashboard: All services healthy?
+- [ ] Cost dashboard: Within budget?
 - [ ] Uptime dashboard: SLO maintained?
 - [ ] Security patches: Any needed?
-- [ ] Capacity planning: Headroom OK?
-- [ ] Disaster recovery test: Works?
+- [ ] Capacity planning: Headroom OK for next phase?
+- [ ] Disaster recovery: Restore test passed?
 
 ---
 
 ## 🎤 YOUR COMMUNICATION
 
-### To Product Manager (Weekly)
-"System running well. Cost on budget. Can handle [Nx] current load if needed."
+### To Product Manager (At phase gates)
+"System running well. Cost within budget. Can handle [Nx] current load if needed."
 
-### To Architect (On changes)
+### To Architect (When infrastructure changes needed)
 "Planning data/traffic changes? Tell me so I can plan capacity."
 
-### To Infosec Lead (On incident)
+### To Infosec Lead (On incident — event trigger)
 "Kill switch tested. Ready to activate if needed. Audit logs secure."
 
 ---
 
 ## 📊 SUCCESS METRICS
 
-**Track weekly:**
+**Tracked at phase gates:**
 
 ```
 OPERATIONS
 ├─ Uptime: [X]% ✅
 ├─ Deployment success rate: [X]% ✅
 ├─ MTTR: <[X] min ✅
-└─ Cost on budget: ✅
+└─ Cost within budget: ✅
 
 RELIABILITY
 ├─ Error rate: <[X]% ✅
 ├─ Timeout rate: <[X]% ✅
 ├─ Data loss: 0 ✅
-└─ Unplanned downtime: [N] min/month ✅
+└─ Unplanned downtime: [N] min this phase ✅
 ```
 
 ---
 
 ## 🔄 HOW TO ADAPT THIS FOR YOUR PROJECT
 
-| Element | SVDP Example | Your Project |
-|---------|-------------|-------------|
+| Element | Example | Your Project |
+|---------|---------|-------------|
 | Budget | $60/month | $[YOUR BUDGET] |
 | Platform | Railway | [YOUR PLATFORM] |
 | Components | PostgreSQL, Qdrant, Compute | [YOUR COMPONENTS] |

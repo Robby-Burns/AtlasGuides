@@ -1,9 +1,9 @@
 # 🚀 START HERE - AI Agent Framework Documentation
 
-**Version:** 1.6.1 | **Updated:** March 13, 2026 | **Part:** 1/10 of Framework  
+**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 1/10 of Framework  
 **For:** AI Coding Assistants (Cursor/Claude Code/Antigravity) + You  
 **Status:** Production Ready ✅  
-**Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • date-of-use validated • 30-50% faster builds • 80%+ code reuse)
+**Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • 2026-compliant • 30-50% faster builds • 80%+ code reuse)
 
 ---
 
@@ -16,14 +16,14 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 3. **What platform?** (Railway, GCP, Azure, Fly, or Northflank)
 4. **What observability?** (OpenTelemetry + LangSmith/Phoenix by default for production)
 5. **What tooling strategy?** (Local adapters vs MCP bridges)
-6. **How does it stay current?** (Bi-annual audit with HITL — configure notification channel in `scale.yaml` before first deploy)
+6. **How does it stay current?** (Scheduled audit with HITL — configure notification channel in `scale.yaml` before first deploy)
 
 ---
 
 ## 🗺️ Quick Navigation
 
 - [30-Second Quick Start](#-30-second-quick-start)
-- [What's New in v1.6.0](#-whats-new-in-v160)
+- [What's New in v1.5.0](#-whats-new-in-v150)
 - [The Risk Scoring Decision Tree](#-the-risk-scoring-decision-tree-0-17-scale)
 - [Framework Files Overview](#-framework-files-overview-1-10-docs)
 - [Platform Deployment Matrix](#-platform-deployment-matrix)
@@ -44,24 +44,13 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 
 ---
 
-## 🆕 What's New in v1.6.0
-
-- **Deploy Debug Council:** Solves the deployment death march — where bugs are fixed in visibility order instead of dependency order, causing repeated redeploy cycles. The council runs a parallel 5-layer scan (config → deps → migrations → containers → parity) on every deploy failure, builds a dependency-ordered Issue Map, and requires human approval before any fix is applied. Protocol lives in `agent.md`; layer checklists live in each role skill.
-- **Pre-Deploy Scan:** Embedded in the Phase 4→5 transition in `agent.md`. All 5 roles scan proactively before every deploy, not just after failure.
-- **Deploy Error Routing:** `agent.md` Directive 4 now contains an explicit routing rule — deploy-related errors go to the Deploy Error Protocol; all other errors go to the AI Engineer 7-Step Protocol. No ambiguity about which path to follow.
-- **`/deploy-scan` Command:** Manually triggers the pre-deploy scan. Added to the standardized commands table in `agent.md`.
-- **Deploy Session Logging:** `.bugs_tracker.md` template in `05_BUILD_CONTEXT_AND_BUGS.md` now includes a Deploy Session Log section so council runs are remembered across sessions.
-- **Deployment Checklist Updated:** `06_INFRASTRUCTURE_AS_CODE.md` Troubleshooting section now routes to the Deploy Error Protocol instead of its own informal 4-step list.
-
----
-
 ## 🆕 What's New in v1.5.0
 
 - **System Kernel (`agent.md`):** Single source of truth for AI behavior. Enforces Citation Law, 5-Phase Loop, and Debate Protocol across all tools (Cursor, Claude Code, Gemini/Antigravity, Windsurf).
 - **Tiered Debate Protocol:** Tier 1 (lightweight sanity checks), Tier 2 (full council at key moments), Tier 3 (human-triggered `/debate`). Ensures quality without killing velocity.
 - **Multi-Tool Sync:** `sync-kernel.sh` propagates kernel to `.cursorrules`, `CLAUDE.md`, and `.windsurfrules` in one command.
 - **Team Onboarding:** `TEAM_ONBOARDING.md` gets new team members productive in 15 minutes.
-- **Bi-Annual Audit System:** Scheduled dependency, API, framework, and skills audits with mandatory HITL sign-off.
+- **Scheduled Audit System:** Scheduled dependency, API, framework, and skills audits with mandatory HITL sign-off.
 - **Skills Lifecycle:** Rule of 3 identification, `/new-skill` command, Skills Registry in `.build-context.md`, audit review in Layer 4.
 - **Naming Normalization:** `.claude-context.md` renamed to `.build-context.md` across all files for tool-agnostic clarity.
 - **10-Part Framework:** New `09_AUDIT_AND_MAINTENANCE.md` as the dedicated maintenance guide.
@@ -72,25 +61,13 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 
 Before writing any code, you must score your agent.
 
-**The formula** (canonical — matches `01_QUICK_REFERENCE.md` and `02_COMPLETE_GUIDE.md`):
+**Data Sensitivity (0-4)** + **Agent Autonomy (0-5)** + **System Impact (0-5)** + **Model Risk (0-3)** = **Total Score**
 
-| Dimension | Range | What It Measures |
-|-----------|-------|-----------------|
-| **Input Risk** | 0–5 | How dangerous or open-ended is the data the agent receives? (0 = structured internal data; 5 = raw unvalidated user input with PII) |
-| **Output Risk** | 0–5 | What can the agent's output affect? (0 = read-only report; 5 = writes to financial systems, sends to customers) |
-| **Data Risk** | 0–4 | How sensitive is the data the agent touches? (0 = none; 4 = PII, health records, financial data) |
-| **Model Risk** | 0–3 | How complex is the model's reasoning and tool use? (0 = simple classifier; 3 = multi-agent with live API tool calls) |
+* **0-5 (Low Risk):** Basic error handling. Proceed fast. (e.g., internal summarizer)
+* **6-11 (Medium Risk):** Requires Circuit Breakers, Rate Limiting, and strict output validation. (e.g., draft email generator)
+* **12-17 (High Risk):** Requires Human-in-the-Loop (HITL), dedicated sidecar proxy, and full audit trails. (e.g., automated refund issuer)
 
-**Input Risk (0–5) + Output Risk (0–5) + Data Risk (0–4) + Model Risk (0–3) = Total Score (0–17)**
-
-* **0–4 (Low Risk):** Basic error handling. Proceed fast. (e.g., internal summarizer)
-* **5–10 (Medium Risk):** Requires Circuit Breakers, Rate Limiting, and strict output validation. (e.g., draft email generator)
-* **11–17 (High Risk):** Requires Human-in-the-Loop (HITL), dedicated sidecar proxy, immutable audit logs, and full audit trails. (e.g., automated quote drafter writing to a financial system)
-
-**Show your math in `AgentSpec.md`.** A score without a dimension breakdown cannot be verified
-and is not compliant with the framework. See `02_COMPLETE_GUIDE.md` Section 3 for examples.
-
-*(See `01_QUICK_REFERENCE.md` for the pocket-size reference card and examples.)*
+*(See `01_QUICK_REFERENCE.md` for the exact calculation formula).*
 
 ---
 
@@ -107,15 +84,15 @@ and is not compliant with the framework. See `02_COMPLETE_GUIDE.md` Section 3 fo
 | **7** | `06_INFRASTRUCTURE_AS_CODE.md` | Terraform, Docker, and deployment patterns. |
 | **8** | `07_CONFIGURATION_CONTROL.md` | `scale.yaml` and cost controls. |
 | **9** | `08_AGNOSTIC_FACTORIES.md` | How to swap DBs, LLMs, and Orchestrators via config. |
-| **10** | `09_AUDIT_AND_MAINTENANCE.md` | Bi-annual audit system, HITL sign-off, and notification setup. |
+| **10** | `09_AUDIT_AND_MAINTENANCE.md` | Scheduled audit system, HITL sign-off, and notification setup. |
 
 **Supporting Files:**
 
 | File | What it is |
 | :--- | :--- |
-| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law, deploy error protocol. Synced to all tools. |
+| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law. Synced to all tools. |
 | `TEAM_ONBOARDING.md` | 15-minute onboarding guide for new team members. |
-| `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. Detects and blocks AgentSpec.md collisions. |
+| `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. |
 | `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. |
 | `MASTER_DOCS_PROMPT.md` | Post-build prompt for generating project documentation. |
 
@@ -123,8 +100,7 @@ and is not compliant with the framework. See `02_COMPLETE_GUIDE.md` Section 3 fo
 
 ## 📌 Version & Status
 
-**Version:** 1.6.1
-**Released:** March 13, 2026  
+**Version:** 1.5.0  
+**Released:** March 8, 2026  
 **Status:** Production Ready ✅  
-**Change from 1.6.0:** Risk scoring formula clarified to canonical Input/Output/Data/Model dimensions with descriptions. Pocket-size reference remains in `01_QUICK_REFERENCE.md`.  
 **Next File:** [01_QUICK_REFERENCE.md](./01_QUICK_REFERENCE.md)

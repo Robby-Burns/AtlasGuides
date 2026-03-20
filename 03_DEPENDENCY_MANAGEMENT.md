@@ -18,7 +18,7 @@ This file teaches you to manage Python dependencies correctly so:
 
 **Golden Rule:** "Development is Flexible. Production is Frozen."
 
-**Long-term health:** Dependencies that are "frozen" today will age. The bi-annual audit in `09_AUDIT_AND_MAINTENANCE.md` ensures your lock file doesn't become a liability. This file handles the *how* of dependency management; File 09 handles the *when* of reviewing them.
+**Long-term health:** Dependencies that are "frozen" today will age. The scheduled audit in `09_AUDIT_AND_MAINTENANCE.md` ensures your lock file doesn't become a liability. This file handles the *how* of dependency management; File 09 handles the *when* of reviewing them.
 
 ---
 
@@ -26,8 +26,8 @@ This file teaches you to manage Python dependencies correctly so:
 
 - [The Golden Rule](#-the-golden-rule)
 - [File Structure](#-file-structure)
-- [The Current Standard: uv](#-the-current-standard-using-uv)
-- [Essential Dependencies](#-essential-dependencies)
+- [The 2026 Standard: uv](#-the-2026-standard-using-uv)
+- [Essential Dependencies](#-essential-dependencies-for-2026)
 - [Agnostic Orchestration Extras](#-agnostic-orchestration-extras)
 - [Docker Integration](#-docker-integration)
 - [pyproject.toml Configuration](#-projecttoml-configuration)
@@ -42,7 +42,7 @@ This file teaches you to manage Python dependencies correctly so:
 **This file:** [03_DEPENDENCY_MANAGEMENT.md](./03_DEPENDENCY_MANAGEMENT.md) (You are here)  
 **After this:** [04_AI_ASSISTANT_INTEGRATION.md](./04_AI_ASSISTANT_INTEGRATION.md) (AI assistant setup)  
 **For production:** [06_INFRASTRUCTURE_AS_CODE.md](./06_INFRASTRUCTURE_AS_CODE.md) (Terraform + Docker)  
-**For ongoing maintenance:** [09_AUDIT_AND_MAINTENANCE.md](./09_AUDIT_AND_MAINTENANCE.md) (Bi-annual audit)
+**For ongoing maintenance:** [09_AUDIT_AND_MAINTENANCE.md](./09_AUDIT_AND_MAINTENANCE.md) (Scheduled audit)
 
 ---
 
@@ -64,7 +64,7 @@ Allows security updates   No surprises in production
 
 ---
 
-## 🛠️ The Current Standard: Using `uv`
+## 🛠️ The 2026 Standard: Using `uv`
 
 ### Why `uv` Over pip?
 
@@ -98,12 +98,7 @@ uv pip install -r requirements-lock.txt
 
 ---
 
-## 📋 Essential Dependencies
-
-> **Validate at time of use.** The packages below were current best practice when this
-> file was last edited. Before adding any of them, run Phase 2 RESEARCH (per `agent.md`)
-> to confirm each is still the recommended choice for your project's current date.
-> The AI assistant is responsible for this check — it cannot be skipped.
+## 📋 Essential Dependencies for 2026
 
 ### Core Application
 ```text

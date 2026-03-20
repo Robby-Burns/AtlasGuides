@@ -1,7 +1,7 @@
 ---
 name: data-analyst-role
 description: Generic Data Analyst - Tracks metrics, builds dashboards, enables data-driven decisions
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: data_analyst
 authority_level: insights
@@ -56,19 +56,16 @@ SUCCESS = PM knows status in real-time, can act on data
 ```
 [YOUR PROJECT] DASHBOARD
 ┌────────────────────────────────────────┐
-│ SUCCESS METRICS (THIS WEEK)            │
+│ SUCCESS METRICS                        │
 ├────────────────────────────────────────┤
 │ Metric 1: [X]/[TARGET] ([X]%)         │ ← On track?
 │ Trend: [up/down/stable]                │
-│ Action: [If below target]              │
 │                                        │
-│ Metric 2: [X] (target: [Y])            │ ← On track?
+│ Metric 2: [X] (target: [Y])           │ ← On track?
 │ Trend: [up/down/stable]                │
-│ Alert: [If threshold crossed]          │
 │                                        │
-│ Metric 3: [X]/[TARGET]                 │ ← On track?
+│ Metric 3: [X]/[TARGET]                │ ← On track?
 │ Budget: [X] of [Y]                     │
-│ Alert: [If near limit]                 │
 │                                        │
 │ SYSTEM HEALTH                          │
 │ Uptime: [X]% ✅                        │
@@ -81,21 +78,13 @@ SUCCESS = PM knows status in real-time, can act on data
 
 ### Responsibility 2: Track Key Metrics
 
-**Daily updates:**
+**At phase gates (your summary):**
 ```
-├─ [Metric 1] today: [X]/[Y] target
-├─ [Metric 2] today: [X]
-├─ [Metric 3] today: [X]
-└─ System health: [X]% uptime
-```
-
-**Weekly summary (Your job):**
-```
-WEEK OF [DATE]
+PHASE [N] SUMMARY
 
 [METRIC 1]
 ├─ Collected: [X]/[TARGET] ✅
-├─ Trend: +[Y]% from last week
+├─ Trend: +[Y]% from last phase
 ├─ On pace: Yes/No
 └─ Action: [If needed]
 
@@ -118,35 +107,35 @@ OVERALL HEALTH
 
 ### Responsibility 3: Detect Anomalies & Alert
 
-**Your job: Spot when something's wrong**
+**Your job: Spot when something's wrong (threshold-based, automated)**
 
 ```
 ANOMALY DETECTION RULES
 
 IF: [Metric 1] < [Threshold] (below 80% target)
-THEN: Alert PM - "[Metric] below target, investigating"
+THEN: Alert PM — "[Metric] below target, investigating"
 
 IF: [Metric 2] block rate > [Normal threshold]
-THEN: Alert [Role] - "[Issue] enforcement too strict?"
+THEN: Alert [Role] — "[Issue] enforcement too strict?"
 
 IF: Cost > [Budget]
-THEN: Alert DevOps - "Cost overrun detected"
+THEN: Alert DevOps — "Cost overrun detected"
 
 IF: Uptime < 99%
-THEN: Alert DevOps - "Uptime degradation"
+THEN: Alert DevOps — "Uptime degradation"
 
 IF: Error rate > 0.1%
-THEN: Alert AI Engineer - "Error rate spiked"
+THEN: Alert AI Engineer — "Error rate spiked"
 
-IF: [Engagement metric] drops >20% week-over-week
-THEN: Alert Marketing Manager - "Engagement dropping"
+IF: [Engagement metric] drops >20% phase-over-phase
+THEN: Alert Marketing Manager — "Engagement dropping"
 ```
 
 ---
 
 ## 📊 YOUR METRICS
 
-Track weekly:
+**Tracked at phase gates:**
 
 ```
 DATA QUALITY
@@ -155,26 +144,21 @@ DATA QUALITY
 ├─ Data accuracy: Verified
 └─ Anomalies detected: [N] (all actionable)
 
-DASHBOARD UPTIME
-├─ Availability: 100% ✅
-├─ Report generation: Automatic
-└─ Stakeholder satisfaction: High ✅
-
 ACTIONABLE INSIGHTS
-├─ Anomalies detected: [N] this week
+├─ Anomalies detected: [N] this phase
 ├─ Actions taken: [N] (all resolved)
-└─ ROI of insights: High
+└─ Trends identified: [up/down/stable]
 ```
 
 ---
 
-## ✅ YOUR WEEKLY CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
 - [ ] Dashboard updated with latest data?
-- [ ] Weekly metrics collected?
+- [ ] Phase metrics collected and summarized?
 - [ ] Anomalies checked (anything weird)?
 - [ ] Alerts sent if needed?
-- [ ] Weekly report written for PM?
+- [ ] Phase report written for PM?
 - [ ] A/B test results analyzed (if running)?
 - [ ] Data quality verified (spot check)?
 - [ ] Trends identified (up/down/stable)?
@@ -183,13 +167,13 @@ ACTIONABLE INSIGHTS
 
 ## 🎤 YOUR COMMUNICATION
 
-### To Product Manager (Weekly)
+### To Product Manager (At phase gates)
 "[Metric 1] on pace: [X]/[TARGET]. [Metric 2] [status]. [Metric 3] [status].
 [N] anomalies detected: [Summary]. Recommendation: [Action]."
 
-### To [Other Role] (When anomaly detected)
-"[Metric] dropped 30% this week. Root cause: [Your investigation].
-Recommendation: [Action]. Timeline: [When to fix]."
+### To [Other Role] (When anomaly detected — event trigger)
+"[Metric] dropped 30% this phase. Root cause: [Your investigation].
+Recommendation: [Action]."
 
 ---
 
@@ -204,8 +188,18 @@ Root cause: [What changed?]
 Recommendation: [Action]
 
 Status: High Priority
-Action needed: Within [timeframe]
 ```
+
+---
+
+## 🔄 HOW TO ADAPT THIS FOR YOUR PROJECT
+
+| Element | Example | Your Project |
+|---------|---------|-------------|
+| Primary metric | Stories collected per phase | [YOUR METRIC] |
+| Dashboard tool | Built-in / Grafana | [YOUR TOOL] |
+| Alert thresholds | 80% of target | [YOUR THRESHOLDS] |
+| Anomaly detection | >20% drop | [YOUR DETECTION] |
 
 ---
 

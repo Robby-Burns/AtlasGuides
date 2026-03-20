@@ -1,17 +1,17 @@
 ---
 file: GENERIC-ROLES-MASTER-GUIDE.md
-version: 1.0.0
+version: 1.2.0
 description: How all generic roles work together in an Antigravity agent system
 framework: Antigravity (adaptable to other frameworks)
 ---
 
 # 📚 GENERIC ROLES MASTER GUIDE
 
-This document explains how your **10 core roles** work together to build and operate an Antigravity agent system.
+This document explains how your **12 core roles + 2 advisory roles** work together to build and operate an Antigravity agent system.
 
 ---
 
-## 🎯 THE 10 CORE ROLES (What You Have)
+## 🎯 THE 12 CORE ROLES
 
 | Role | Authority | Primary Job | Blocking Power |
 |------|-----------|-------------|----------------|
@@ -20,17 +20,28 @@ This document explains how your **10 core roles** work together to build and ope
 | **Database Manager** | Technical | Schema, encryption, performance, backups | ✅ Can block deployments (data risk) |
 | **Infosec Lead** | Security | Audits, kill switch, breach prevention | ✅ Can block (activate kill switch) |
 | **DevOps Manager** | Operations | Deployment, costs, uptime, monitoring | ✅ Can block deployments |
-| **Marketing Manager** | Strategic | Brand rules, final approval, messaging | ✅ Can block publication |
 | **AI Engineer** | Technical | Implement agents, write code, optimize | ⚠️ Code review blocker (if violates patterns) |
 | **QA Engineer** | Technical | Tests, coverage, quality gates | ✅ Can block deployments (tests fail) |
 | **Data Analyst** | Insights | Track metrics, detect anomalies, dashboards | ⚠️ Informs decisions, doesn't block |
 | **Compliance Officer** | Legal | GDPR/CCPA compliance, data retention, legal risk | ✅ Can block (legal liability) |
+| **Marketing Manager** | Strategic | Brand rules, final approval, messaging | ✅ Can block publication |
+| **UX/UI Designer** | Strategic | User interfaces, accessibility, usability testing | ✅ Can block launches (accessibility) |
+| **Project Lead** | Operational | Coordinate team, remove blockers, manage phases | ✅ Can block (scope/timeline) |
+
+### Advisory Roles (Inform and Challenge — Don't Block Directly)
+
+| Role | Authority | Primary Job | Blocking Power |
+|------|-----------|-------------|----------------|
+| **Red Team Hacker** | Adversarial Testing | Attack surfaces, prompt injection, exploit discovery | ⚠️ Findings escalate to Infosec Lead who blocks |
+| **Devil's Advocate** | Advisory Critical | Challenge assumptions, pre-mortems, failure analysis | ⚠️ Flags risks, doesn't block directly |
+
+**Why separate?** The 12 core roles *own decisions and can block progress*. The advisory roles *inform* those decisions. The Red Team Hacker's findings become Infosec Lead's blocking decisions. The Devil's Advocate's challenges become the team's validated (or invalidated) assumptions. This prevents advisory roles from becoming bottlenecks while ensuring their insights reach the people who can act.
 
 ---
 
 ## 🔄 WORKFLOW: How Roles Work Together
 
-### PHASE 1: PLANNING (Product Manager + Architect)
+### PHASE 1: PLANNING (Product Manager + Architect + Devil's Advocate)
 
 ```
 Product Manager defines:
@@ -45,7 +56,14 @@ Architect reviews:
 ├─ "Any vendor lock-in risks?"
 └─ Recommendation: "Yes, with [approach]" or "No, redesign needed"
 
-Both agree on Phase 1 success criteria
+Devil's Advocate challenges:
+├─ "What assumptions are we making about users?"
+├─ "What's the simplest thing that could go wrong?"
+├─ "Do we actually need AI for this, or would rules work?"
+└─ Pre-mortem: "Imagine this failed — why?"
+
+All agree on Phase 1 success criteria
+Devil's Advocate flags documented and addressed or accepted
 
 → APPROVED TO BUILD
 ```
@@ -74,7 +92,7 @@ QA Engineer reviews:
 Both approve → CODE MERGED
 ```
 
-### PHASE 3: SECURITY (Infosec Lead + Database Manager)
+### PHASE 3: SECURITY (Infosec Lead + Database Manager + Red Team Hacker)
 
 ```
 Database Manager verifies:
@@ -89,10 +107,22 @@ Infosec Lead verifies:
 ├─ Audit trail complete? ✅
 └─ Kill switch tested? ✅
 
-Both approve → SECURITY CLEARED
+Red Team Hacker attacks:
+├─ Prompt injection attempts (direct + indirect) ✅
+├─ Data exfiltration attempts ✅
+├─ Privilege escalation tests ✅
+├─ Abuse scenario exploration ✅
+└─ Findings report delivered to Infosec Lead
+
+Infosec Lead reviews Red Team findings:
+├─ Critical findings? → BLOCK until fixed
+├─ High findings? → Fix before next phase gate
+├─ Medium/Low? → Backlog with timeline
+
+All approve → SECURITY CLEARED
 ```
 
-### PHASE 4: QUALITY (QA Engineer + Data Analyst)
+### PHASE 4: QUALITY (QA Engineer + Data Analyst + Devil's Advocate)
 
 ```
 QA Engineer verifies:
@@ -107,7 +137,13 @@ Data Analyst verifies:
 ├─ Baselines established? ✅
 └─ Anomaly detection working? ✅
 
-Both approve → QUALITY GATE PASSED
+Devil's Advocate reviews:
+├─ Edge cases from design review tested? ✅
+├─ Failure modes documented? ✅
+├─ Graceful degradation path exists? ✅
+└─ Unvalidated assumptions flagged in risk register? ✅
+
+All approve → QUALITY GATE PASSED
 ```
 
 ### PHASE 5: DEPLOYMENT (DevOps Manager + Infosec Lead)
@@ -118,18 +154,17 @@ DevOps Manager verifies:
 ├─ Cost within budget? ✅
 ├─ Monitoring configured? ✅
 ├─ Rollback plan ready? ✅
-└─ Team trained? ✅
 
 Infosec Lead verifies:
 ├─ Kill switch works? ✅
 ├─ Audit trail enabled? ✅
-├─ Incident response ready? ✅
+├─ Red Team findings resolved? ✅
 └─ Emergency procedures documented? ✅
 
 Both approve → GO FOR DEPLOYMENT
 ```
 
-### PHASE 6: EXECUTION (All Roles + Marketing Manager)
+### PHASE 6: EXECUTION (All Roles Monitor)
 
 ```
 AI Engineer deploys code
@@ -143,73 +178,23 @@ Data Analyst monitors:
 Marketing Manager monitors:
 ├─ Brand compliance maintained?
 ├─ Quality high?
-├─ Stakeholder communication?
 └─ Approval gates working?
 
 Infosec Lead monitors:
 ├─ Any security incidents?
 ├─ Audit trail complete?
 ├─ Kill switch ready?
-└─ Compliance maintained?
 
 DevOps Manager monitors:
 ├─ Uptime good?
-├─ Cost on budget?
+├─ Cost within budget?
 ├─ Performance acceptable?
-└─ No deployment issues?
 
-All roles report weekly to Product Manager
-```
+Red Team Hacker (at deployment phase gates):
+├─ Retest after major updates
+└─ Findings to Infosec Lead
 
----
-
-## 🎤 COMMUNICATION STRUCTURE
-
-### Daily Standup (Optional, if team >6 people)
-```
-Participants: Project Lead (optional) + 1 rep per role
-Duration: 15 minutes
-
-Each role says:
-"[Role]: Status is [good/at-risk]. Blocker: [if any]. Help needed: [if any]."
-
-Project Lead removes blockers between roles
-```
-
-### Weekly Sync (Mandatory)
-```
-Participants: All 10 roles
-Duration: 60 minutes
-
-Agenda:
-1. [5 min] Product Manager: Status of success metrics
-2. [5 min] Architect: Any tech blockers?
-3. [5 min] AI Engineer: Code status
-4. [5 min] QA Engineer: Quality status
-5. [5 min] Data Analyst: Dashboard insights
-6. [5 min] Infosec Lead: Security posture
-7. [5 min] Database Manager: Data status
-8. [5 min] DevOps Manager: Infrastructure status
-9. [5 min] Marketing Manager: Brand/approval status
-10. [5 min] Compliance Officer: Compliance status
-11. [10 min] Open discussion (blockers, conflicts, decisions)
-
-Output: Decisions made, action items assigned, next week's priorities
-```
-
-### Ad-Hoc Escalation (When Needed)
-```
-Trigger: Conflict between roles OR decision needed
-
-Example:
-"Architect and QA Engineer disagree: 
-Is test coverage at 75% acceptable to deploy?"
-
-Process:
-1. Roles present their cases (2 min each)
-2. Product Manager decides: "Code deploys with action item for 80% coverage in Phase 2"
-
-Result: Escalation resolved, decision documented
+All roles report to Product Manager at phase gates
 ```
 
 ---
@@ -231,23 +216,21 @@ Cost optimization strategy?       | DevOps Manager   | Product Manager (budget)
 PII redaction rules?              | Infosec Lead     | Compliance Officer
 Compliance requirement?           | Compliance Ofc   | Product Manager (feasible?)
 Agent performance acceptable?     | AI Engineer      | QA Engineer (tests pass?)
+Security finding severity?        | Infosec Lead     | Red Team (provides evidence)
+Assumption valid or invalid?      | Product Manager  | Devil's Advocate (challenges)
+Launch despite open risk?         | Product Manager  | Infosec Lead, Devil's Advocate (flag)
+Phase advancement?                | Project Lead     | All roles (phase checkpoints)
 ```
 
 ---
 
 ## 📊 THE ANTIGRAVITY WORKFLOW
 
-In **Antigravity**, this is how the roles interact:
-
 ### Agent Manager (Orchestration)
 
 ```
 Agent Manager has a task:
-"Build [Feature]. Success = [Metric]. Ready by [Date]"
-
-Who runs this task? 
-→ Usually the most relevant role(s)
-→ E.g., "AI Engineer builds, Architect reviews, QA verifies, Data Analyst measures"
+"Build [Feature]. Success = [Metric]. Phase gate: [Criteria]"
 
 Task workflow:
 1. AI Engineer: Claim task → Work on code/agents
@@ -255,29 +238,33 @@ Task workflow:
 3. QA Engineer: Test review → Approve/block
 4. Data Analyst: Set up metrics → Approve
 5. DevOps Manager: Deploy → Approve/block
-6. Product Manager: Mark complete → Celebrate
+6. Product Manager: Mark complete
 
 If any role blocks:
 → Task stays open
-→ Blocker notified in Slack
 → Role who blocked explains why
-→ Fix applied
-→ Re-review
-→ Continue
+→ Fix applied → Re-review → Continue
+
+Advisory role integration:
+→ Devil's Advocate reviews during Phase 1 (planning) and Phase 4 (quality)
+→ Red Team Hacker tests during Phase 3 (security) and at deployment gates
+→ Neither blocks tasks directly — findings route through blocking roles
 ```
 
 ### Context Files (Documentation)
 
 ```
 Pinned context files in Agent Manager:
-├─ .claude-context.md (current status)
+├─ .build-context.md (current status)
 ├─ MISSION_AND_SUCCESS_METRICS.md (Product Manager)
 ├─ ARCHITECTURE.md (Architect)
 ├─ SECURITY_REQUIREMENTS.md (Infosec Lead)
 ├─ DATABASE_SCHEMA.md (Database Manager)
 ├─ DEPLOYMENT_CHECKLIST.md (DevOps Manager)
 ├─ BRAND_RULES.md (Marketing Manager)
-└─ COMPLIANCE_REQUIREMENTS.md (Compliance Officer)
+├─ COMPLIANCE_REQUIREMENTS.md (Compliance Officer)
+├─ RED_TEAM_FINDINGS.md (Red Team Hacker)
+└─ RISK_REGISTER.md (Devil's Advocate)
 
 Each role is responsible for keeping their doc current
 ```
@@ -286,64 +273,69 @@ Each role is responsible for keeping their doc current
 
 ## 🛑 WHEN ROLES DISAGREE
 
-**Conflict Resolution Process:**
+### Conflict Between Core Roles
 
 ```
 Scenario: Architect and QA Engineer disagree on code review
 
-Conflict: 
-Architect: "Code uses factories correctly, ship it"
-QA: "Coverage only 72%, we need 80%"
-
-Resolution:
+Process:
 1. Present positions (2 min each)
-2. Product Manager decides: "Can we ship with 72% and 80% goal in Phase 2?"
-3. Decision: "Yes, block deployment, fix before Phase 2"
-4. Action: QA writes improvement stories, Architect reviews
-5. Result: Team knows decision, moves forward
+2. Product Manager decides based on mission alignment
+3. Decision logged in .build-context.md
+4. Team moves forward
 
 Key: Product Manager breaks ties (aligns with mission)
+```
+
+### When Advisory Roles Are Ignored
+
+```
+Scenario: Devil's Advocate flags a risk, Architect dismisses it
+
+Process:
+1. Devil's Advocate documents the concern with reasoning
+2. Architect responds with counter-reasoning
+3. If unresolved: Escalate to Project Lead → Product Manager
+4. Core role must: Accept risk (documented) or address it
+
+Key: Advisory concerns are never silently ignored.
+     They are either addressed or formally accepted as risks.
 ```
 
 ---
 
 ## 📋 ONBOARDING A NEW TEAM MEMBER
 
-**Day 1:**
-- Read: MISSION_AND_SUCCESS_METRICS.md (15 min)
-- Read: Their role skill (30 min)
-- Read: ARCHITECTURE.md (15 min)
-- Understand: Who owns what (30 min)
-- Understand: How to talk to other roles (15 min)
+**Session 1:**
+- Read: MISSION_AND_SUCCESS_METRICS.md
+- Read: Their role skill
+- Read: ARCHITECTURE.md
+- Understand: Who owns what
+- Understand: How to communicate with other roles
 
-**Day 2:**
+**Session 2:**
 - See: Live Agent Manager tasks
-- See: Live communication in Slack
 - Ask: Questions answered by their role mentor
+- Run: Their first task
 - Ready: To contribute
-
-**Week 1:**
-- Sit in on meetings
-- Review their role's responsibilities
-- Run their first task
-- Get feedback
-- Integrate into team
 
 ---
 
 ## 🎯 SUCCESS METRICS FOR THE WHOLE TEAM
+
+**Tracked at phase gates:**
 
 ```
 MISSION EXECUTION
 ├─ Primary metric hitting target? ✅
 ├─ Secondary metrics on track? ✅
 ├─ Phase gates passing? ✅
-└─ Deadline met? ✅
+└─ Scope maintained (no creep)? ✅
 
 TEAM HEALTH
-├─ All roles happy/productive? ✅
+├─ All roles productive? ✅
 ├─ Decisions being made quickly? ✅
-├─ Communication clear? ✅
+├─ Blockers resolved same-session? ✅
 ├─ Conflicts resolved constructively? ✅
 └─ Velocity stable/improving? ✅
 
@@ -352,33 +344,40 @@ TECHNICAL HEALTH
 ├─ Tests comprehensive? ✅
 ├─ Security posture strong? ✅
 ├─ Infrastructure reliable? ✅
-└─ Costs on budget? ✅
+└─ Costs within budget? ✅
+
+ADVERSARIAL HEALTH
+├─ Red Team findings resolved on schedule? ✅
+├─ Assumptions validated (not just accepted)? ✅
+├─ Risk register current? ✅
+└─ No "surprises" post-launch? ✅
 ```
 
 ---
 
 ## 🔄 SCALING: What to Add When
 
-| Team Size | Add | Why |
-|-----------|-----|-----|
-| 1-3 people | Nothing (one person multiple roles) | Too small to specialize |
-| 3-5 | Keep 10 roles, rotate | Roles can overlap |
-| 5-8 | Hire 1-2 people per role | Specialization helps |
-| 8-15 | Full team (1 per role), add Project Lead | Coordination becomes critical |
-| 15-25 | Add from "missing roles" list | More complex requirements |
-| 25+ | Add middle management / domain experts | Scale challenges emerge |
+| Team Size | Approach | Why |
+|-----------|----------|-----|
+| 1-3 people | One person wears multiple role hats | Too small to specialize |
+| 3-5 | Keep all roles, rotate ownership | Roles can overlap |
+| 5-8 | 1-2 people per role | Specialization helps |
+| 8-15 | Full team (1 per core role) + Project Lead | Coordination becomes critical |
+| 15-25 | Dedicated Red Team + Devil's Advocate | Advisory roles need full-time attention |
+| 25+ | Add domain experts | Scale challenges emerge |
 
 ---
 
-## ✅ QUICK START: Your First Week
+## ✅ QUICK START: Your First Project
 
-**Monday:** PM + Architect define Phase 1 together
-**Tuesday:** AI Engineer + Architect design solution
-**Wednesday:** AI Engineer builds, QA Engineer writes tests
-**Thursday:** Infosec Lead + DB Manager audit, DevOps Manager plans deployment
-**Friday:** Weekly sync, celebrate progress, plan next week
+**Phase 1 (Planning):** PM + Architect + Devil's Advocate define scope (Devil's Advocate runs pre-mortem)
+**Phase 2 (Build):** AI Engineer + Architect design and implement
+**Phase 3 (Security):** Infosec Lead + DB Manager audit, Red Team runs attack scan
+**Phase 4 (Quality):** QA Engineer verifies, Data Analyst sets up dashboards
+**Phase 5 (Deploy):** DevOps Manager deploys, Infosec Lead confirms kill switch
+**Phase 6 (Execute):** All roles monitor, iterate
 
-**Result:** By Friday, you have your first working prototype!
+**Result:** By the end of Phase 2, you have a working prototype with validated assumptions and enforced patterns.
 
 ---
 
@@ -388,7 +387,10 @@ TECHNICAL HEALTH
 ✅ Clear ownership (every decision has an owner)
 ✅ Built-in oversight (every role reviews others' work)
 ✅ Risk management (multiple perspectives catch issues)
+✅ Adversarial testing (Red Team breaks it before attackers do)
+✅ Assumption validation (Devil's Advocate catches groupthink)
 ✅ Scalable (structure works from 3 people to 30)
+✅ Phase-gated (no calendar dependencies, works at any pace)
 ✅ Antigravity-native (works with agent paradigm)
 ✅ Reusable (same structure for every project)
 ```
@@ -401,8 +403,8 @@ TECHNICAL HEALTH
 2. **For each role:** Customize [YOUR PROJECT] placeholders
 3. **Add missing roles:** Use MISSING-ROLES-ASSESSMENT.md
 4. **Define success metrics:** Product Manager fills in
-5. **Define communication cadence:** Weekly sync minimum
-6. **Document decisions:** Keep decision log (decision → owner → date → reasoning)
+5. **Define phase structure:** Discovery → Build → Test → Deploy → Maintain (or your own)
+6. **Document decisions:** Keep decision log (decision → owner → reasoning)
 
 ---
 

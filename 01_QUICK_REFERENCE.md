@@ -38,7 +38,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 5. **TOOLING** (Local vs MCP?)
 6. **IMPLEMENTATION** (Build + Test + Eval)
 7. **DEPLOY & MONITOR** (Terraform + OTEL)
-8. **MAINTAIN** (Bi-annual audit. HITL sign-off. Nothing auto-applied.)
+8. **MAINTAIN** (Scheduled audit. HITL sign-off. Nothing auto-applied.)
 
 ---
 
@@ -46,7 +46,7 @@ This file is your **reference desk** for quick answers. No long explanations, ju
 
 Before jumping to distributed workers, decide how your agents collaborate in memory.
 
-| Your Workflow Type | Recommended Orchestrator | Why |
+| Your Workflow Type | Recommended Orchestrator | Why in 2026? |
 | :--- | :--- | :--- |
 | **Linear / Simple RAG** | Simple Async / Custom Python | No overhead. Fast execution. |
 | **Role-Playing Teams** | CrewAI | Best for sequential, hierarchical task delegation (e.g., Researcher -> Analyst -> Writer). |
@@ -84,9 +84,9 @@ llm = get_llm_provider()
 orchestrator = get_orchestrator()
 ```
 
-**Card 2: Bi-Annual Audit (Pocket Size)**
+**Card 2: Scheduled Audit (Pocket Size)**
 ```text
-SCHEDULE: Every 6 months (March + September)
+SCHEDULE: Recurring (recommended: every 6 months, configure in scale.yaml)
 CHECKS:   Dependencies | Broker/API changelogs | Framework guides
 CHANNEL:  scale.yaml → audit.notification_channel
 HITL:     Human reviews report. Approves each item.

@@ -1,6 +1,6 @@
-# 🔍 Audit & Maintenance - Bi-Annual Dependency Audit with HITL Sign-Off
+# 🔍 Audit & Maintenance - Scheduled Dependency Audit with HITL Sign-Off
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 10/10  
+**Version:** 1.6.0 | **Updated:** March 19, 2026 | **Part:** 10/10  
 **Status:** Production Ready ✅  
 **Purpose:** Keep deployed agents trustworthy over time through scheduled audits, mandatory human review, and automated CVE scanning.
 
@@ -46,14 +46,14 @@ The Golden Rule of `03_DEPENDENCY_MANAGEMENT.md` is "Production is Frozen." But 
 
 ## 📅 Schedule & Triggers
 
-### Primary Audit: Bi-Annual (March + September)
+### Primary Audit: Recurring (Configurable Interval)
 
-Runs automatically on the first Monday of March and September, at the time configured in `scale.yaml`.
+Runs automatically at the interval configured in `scale.yaml` (recommended: every 6 months).
 
 ```yaml
 # config/scale.yaml (audit block)
 audit:
-  schedule_months: [3, 9]
+  schedule_interval_months: 6
   schedule_day: "first_monday"
   schedule_time: "06:00"
   schedule_timezone: "UTC"
@@ -65,7 +65,7 @@ Triggered by a scheduled task in your deployment environment (cron job, Cloud Sc
 
 A lightweight weekly scan runs silently every Monday (when `cve_check_weekly: true` in `scale.yaml`). This checks only for **critical security vulnerabilities** in your current dependency tree. If a critical CVE is found, a notification fires immediately — it does not wait for the next scheduled audit.
 
-The weekly scan calls `POST /audit/cve-check`. Non-critical findings are queued for the next bi-annual audit.
+The weekly scan calls `POST /audit/cve-check`. Non-critical findings are queued for the next scheduled audit.
 
 ---
 
@@ -93,13 +93,14 @@ Each file in `docs/guides/` is reviewed for recommendations that are no longer c
 - Patterns that have known issues in newer runtime versions
 - Proposed edits drafted for human review — the guides do not rewrite themselves
 
-### Layer 4: Skills Review
+### Layer 4: Skills & Archive Review
 
 Every skill registered in `.build-context.md` is reviewed for health:
 - **Staleness:** Does the skill reference deprecated libraries, outdated API patterns, or superseded tools? If so, flag for update.
 - **Redundancy:** Has a new library or framework feature made the skill unnecessary? If so, flag for retirement.
 - **Coverage gaps:** Review `.bugs_tracker.md` and recent build history for repeating patterns that are *not* yet skills. If the same fix or scaffold has been applied 3+ times since the last audit, propose it as a new skill candidate.
 - **Test health:** Do all skill test files still pass? A skill with a failing test is flagged CRITICAL.
+- **Archive review:** Scan `docs/archive/` for patterns that were archived from `.bugs_tracker.md` but never promoted to skills. If a recurring pattern was moved to cold storage without skill extraction, flag it as a coverage gap. This catches knowledge that slipped through the `/archive-memory` routine's skill promotion check.
 
 Skills are proposed for creation, update, or retirement in the audit report alongside dependency and API findings. The human approves or rejects each proposal.
 
@@ -245,7 +246,7 @@ Each item in the report has a checkbox for human decision:
 
 ---
 
-## Layer 4: Skills
+## Layer 4: Skills & Archive
 
 ### [INFO] Skill: test-scaffold — Healthy
 **Status:** All tests pass. No deprecated references found.
@@ -261,6 +262,14 @@ Each item in the report has a checkbox for human decision:
 ### [NEW] Proposed Skill: migration-validator
 **Trigger:** Alembic migration validation has been performed manually 4 times since last audit.
 **Recommendation:** Extract into a reusable skill at `/skills/migration-validator/`.
+- [ ] APPROVED (create skill)
+- [ ] DEFERRED
+- [ ] REJECTED
+
+### [WARNING] Archive Gap: Retry backoff pattern
+**Source:** `docs/archive/memory_archive_2026-03-01.md` — resolved bugs BUGS-003, BUGS-007, BUGS-012 all describe retry/backoff fixes.
+**Issue:** Pattern was archived across multiple `/archive-memory` cycles without being promoted to a skill.
+**Recommendation:** Extract into a reusable skill at `/skills/retry-backoff/`.
 - [ ] APPROVED (create skill)
 - [ ] DEFERRED
 - [ ] REJECTED
@@ -290,7 +299,7 @@ The audit system exposes three endpoints. These are interface contracts — the 
 
 ### `POST /audit/run`
 
-**Purpose:** Triggers a full bi-annual audit scan.  
+**Purpose:** Triggers a full scheduled audit scan.  
 **Called by:** Scheduled task (cron, Cloud Scheduler, etc.)  
 **Returns:** `202 Accepted` with a `report_id` for tracking.  
 **Side effects:** Generates the report file. Sends notification via configured channel.
@@ -352,7 +361,7 @@ The audit system exposes three endpoints. These are interface contracts — the 
 - [ ] Set `audit.notification_channel` in `scale.yaml` (default is `none`)
 - [ ] Set `audit.schedule_time` and `audit.schedule_timezone` in `scale.yaml`
 - [ ] Add notification credentials to `.env` or cloud secret manager
-- [ ] Schedule the bi-annual audit task in your deployment environment:
+- [ ] Schedule the recurring audit task in your deployment environment:
   - **Railway:** Use a Cron job service pointed at `POST /audit/run`
   - **GCP:** Cloud Scheduler → Cloud Run
   - **Azure:** Timer-triggered Function → Container App
@@ -361,13 +370,14 @@ The audit system exposes three endpoints. These are interface contracts — the 
 - [ ] Confirm `audit.auto_apply: false` in `scale.yaml`
 - [ ] Run `POST /audit/test-notify` to confirm notification delivery
 - [ ] Verify the `docs/audits/` directory exists in your repo
+- [ ] Verify the `docs/archive/` directory exists in your repo (used by `/archive-memory`, reviewed in Layer 4)
 
 ---
 
 ## 📌 File Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** March 19, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 

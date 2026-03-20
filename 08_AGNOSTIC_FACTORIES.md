@@ -13,7 +13,7 @@ This file is the **bridge** between the "Tech Radar" (File 04) and your Codebase
 **The Problem:** The Tech Radar finds a cool new library (e.g., `pypdf-turbo`), but if you `import pypdf_turbo` directly in your agent, you are "vendor-locked" to that specific library. If it breaks next week, you have to rewrite the agent.
 
 **The Solution:**
-1. **Discover** via Tech Radar (or bi-annual audit).
+1. **Discover** via Tech Radar (or scheduled audit).
 2. **Encapsulate** via Adapter.
 3. **Inject** via Factory.
 
@@ -36,8 +36,8 @@ This file is the **bridge** between the "Tech Radar" (File 04) and your Codebase
 
 This is the standard workflow for adding **ANY** new dependency to the project.
 
-### Step 0: Scheduled Discovery (The Bi-Annual Audit)
-The Tech Radar fires when you think to run it. The bi-annual audit fires whether you remember or not. Think of it as the proactive, scheduled version of Step 1. It scans `pyproject.toml`, API changelogs, and the framework guides on a fixed calendar. Anything it finds enters this same pipeline: assess → interface → adapter → factory. The audit doesn't replace the Tech Radar — it ensures the Tech Radar runs at minimum twice a year even on mature, stable projects you've stopped actively thinking about. See `09_AUDIT_AND_MAINTENANCE.md` for the full audit procedure.
+### Step 0: Scheduled Discovery (The Recurring Audit)
+The Tech Radar fires when you think to run it. The scheduled audit fires whether you remember or not. Think of it as the proactive, scheduled version of Step 1. It scans `pyproject.toml`, API changelogs, and the framework guides on a configurable interval. Anything it finds enters this same pipeline: assess → interface → adapter → factory. The audit doesn't replace the Tech Radar — it ensures the Tech Radar runs at minimum on a regular cadence even on mature, stable projects you've stopped actively thinking about. See `09_AUDIT_AND_MAINTENANCE.md` for the full audit procedure.
 
 ### Step 1: Discovery (Tech Radar)
 The AI assistant runs the `tech-radar-skill` and determines that `pypdf-turbo` is faster than `pypdf2`.
@@ -165,7 +165,7 @@ def get_orchestrator() -> AgentOrchestrator:
 
 ## 📢 The Notifier Factory
 
-Configurable audit notification channel. Used by the bi-annual audit system to tell the human their report is ready. Notification contains a link only — never report content (security requirement).
+Configurable audit notification channel. Used by the scheduled audit system to tell the human their report is ready. Notification contains a link only — never report content (security requirement).
 
 ```python
 # app/factories/notifier_factory.py

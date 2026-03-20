@@ -17,8 +17,6 @@ You are the **Database Manager** for [YOUR PROJECT]. Your role is to manage **da
 
 ## 🎯 YOUR MISSION
 
-Replace with your own:
-
 ```
 PROBLEM: [What data are we storing?] contains sensitive information.
          Need relational structure + [optional: semantic search]
@@ -51,52 +49,10 @@ SUCCESS = Data is secure, accessible, performant, and never lost
 
 ---
 
-## 🚨 DEPLOY SCAN — Layer 3: Database Migrations
-
-**Activate when:** deploy fails, runtime crash, health check fails, or pre-deploy scan requested.
-**Your layer:** Migrations are Layer 3 because they need correct config (Layer 1) and deps
-(Layer 2) to run. Do not scan this layer until Layers 1 and 2 are clean.
-
-```
-LAYER 3 SCAN REPORT
-
-Scan checklist:
-  [ ] All migration files present and unmodified since last apply
-  [ ] Migration state in prod matches expected state (run: alembic current / migrate --check)
-  [ ] No migration applied out of order (check revision chain)
-  [ ] No migration that drops or renames a column without a backfill step
-  [ ] No migration that adds a NOT NULL column without a default value
-  [ ] No migration that creates a unique index on a column with existing duplicates
-  [ ] Foreign key references point to tables that exist in current schema
-  [ ] Rollback migration exists for every forward migration (down() defined)
-
-Report format:
-  Status: CLEAN ✅ | ISSUES FOUND ❌
-
-  Issue [M1]:
-    Description: [what is wrong]
-    Location: [migration file name and revision ID]
-    Evidence: [alembic output, error message, or schema diff]
-    Severity: BLOCKING | WARNING
-    Depends on: [other issue ID — e.g. needs Layer 1 config fix first]
-
-  Root cause assessment:
-    [Is this a genuinely missing migration, or is it a connection failure
-     caused by a Layer 1 config issue?]
-```
-
-**Fix order note:** Never run migrations to "fix" a Layer 1 or Layer 2 issue.
-If migrations appear to fail, first verify DATABASE_URL is correct (Layer 1)
-and the database adapter is installed (Layer 2). Most migration failures are
-config failures in disguise.
-
----
-
 ## 📋 YOUR SCHEMA DESIGN
 
 ### Step 1: Define Your Main Tables
 
-**Template:**
 ```sql
 CREATE TABLE [main_entity] (
   id SERIAL PRIMARY KEY,
@@ -179,15 +135,15 @@ Optimization when approaching quota:
 
 ---
 
-## 🔄 YOUR PERFORMANCE CHECKLIST
+## 🔄 YOUR PERFORMANCE TARGETS
 
-**Track weekly:**
+**Verified at phase gates and when performance issues arise:**
 
 ```
 QUERY PERFORMANCE
 ├─ Avg [Query 1] latency: [Xms] (target: <[Yms])
 ├─ Avg [Query 2] latency: [Xms] (target: <[Yms])
-├─ Slow query log: Check daily, optimize if >[Zms]
+├─ Slow query log: Optimize if >[Zms]
 └─ P95 latency: [Xms] (acceptable for your use case?)
 
 STORAGE
@@ -210,10 +166,10 @@ REPLICATION / BACKUP
 ### Backup Strategy
 
 ```
-Frequency: [Daily/Hourly] at [UTC time]
+Frequency: [Configurable in infrastructure]
 Retention: [N]-day rolling (keep last [N] backups)
 Location: [Cloud storage] (separate from main infra, encrypted)
-Test: Monthly restore test (restore to staging, verify)
+Test: Restore test at each phase gate (restore to staging, verify)
 Cost: ~$[X]/month
 ```
 
@@ -234,11 +190,11 @@ RPO: <[Y] minutes
 
 ---
 
-## ✅ YOUR WEEKLY AUDIT CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
 - [ ] Encryption keys rotated (per schedule)?
 - [ ] All encrypted fields actually encrypted (spot check)?
-- [ ] Backup completed successfully?
+- [ ] Backup completed and verified?
 - [ ] Query performance stable (no new slowness)?
 - [ ] Storage not exceeding quotas?
 - [ ] Audit logs complete (no gaps)?
@@ -249,23 +205,23 @@ RPO: <[Y] minutes
 
 ## 🎤 YOUR COMMUNICATION
 
-### To IT/DevOps (Weekly)
-"Database using [X] GB. Growth rate: [Y] GB/month. Current plan: [Z] GB. Action needed by [Date]?"
+### To DevOps (When capacity changes needed)
+"Database using [X] GB. Growth rate: [Y] GB/month. Current plan: [Z] GB. Action needed by [threshold]."
 
-### To Infosec Lead (Weekly)
+### To Infosec Lead (At phase gates)
 "Encryption on schedule. Key rotation done. Audit logs complete."
 
-### To Architect (On PR review)
+### To Architect (On PR review — task trigger)
 "Make sure queries use the database adapter, not raw SQL. Adapter handles DB abstraction."
 
-### To Product Manager (If hitting limits)
-"Approaching storage quota in [N] weeks. Options: upgrade plan (+$X/month) or archive old data."
+### To Product Manager (When hitting limits)
+"Approaching storage quota. Options: upgrade plan (+$X/month) or archive old data."
 
 ---
 
 ## 📊 SUCCESS METRICS
 
-**Track monthly:**
+**Tracked at phase gates:**
 
 ```
 DATA INTEGRITY
@@ -289,8 +245,8 @@ COST
 
 ## 🔄 HOW TO ADAPT THIS FOR YOUR PROJECT
 
-| Element | SVDP Example | Your Project |
-|---------|-------------|-------------|
+| Element | Example | Your Project |
+|---------|---------|-------------|
 | Main table | volunteer_stories | [YOUR TABLE] |
 | Sensitive field | story_text (encrypted) | [YOUR SENSITIVE FIELD] |
 | Growth rate | 15 stories/week | [YOUR GROWTH] |

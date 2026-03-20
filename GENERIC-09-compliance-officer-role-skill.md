@@ -1,7 +1,7 @@
 ---
 name: compliance-officer-role
 description: Generic Compliance Officer - Ensures regulatory compliance, manages legal risk
-version: 1.0.0
+version: 1.1.0
 context: [YOUR_PROJECT_NAME]
 role: compliance_officer
 authority_level: legal
@@ -108,8 +108,8 @@ DATA RETENTION POLICY
 
 [DATA TYPE] Retention:
 ├─ Keep if: [User consented AND data actively used]
-├─ Archive if: [Not used in 1 year → Cold storage]
-├─ Delete if: [User requests OR [TIME LIMIT]]
+├─ Archive if: [Not used in retention period → Cold storage]
+├─ Delete if: [User requests OR retention limit reached]
 └─ Timeline: [Days to complete]
 
 User Deletion Request Process:
@@ -118,12 +118,12 @@ User Deletion Request Process:
 3. Flag: Database Manager "Delete [user_id]"
 4. Confirm: "Your data deleted on [DATE]"
 5. Document: Log deletion in compliance records
-6. Verify: Confirm deletion in [X days]
+6. Verify: Confirm deletion complete
 ```
 
 ### Responsibility 4: Regulatory Audits
 
-**Quarterly/annual:**
+**At each phase gate and before deployment:**
 
 ```
 AUDIT CHECKLIST
@@ -155,7 +155,7 @@ Third-Party Sharing
 
 ## 📊 YOUR METRICS
 
-Track quarterly:
+**Tracked at phase gates:**
 
 ```
 COMPLIANCE STATUS
@@ -170,7 +170,7 @@ DOCUMENTATION
 ├─ ToS: Current ✅
 ├─ Consent records: Complete ✅
 ├─ Data retention policy: Documented ✅
-└─ Risk assessment: Quarterly ✅
+└─ Risk assessment: Current ✅
 
 RISK LEVEL
 ├─ Critical risks: 0 ✅
@@ -180,33 +180,32 @@ RISK LEVEL
 
 ---
 
-## ✅ YOUR QUARTERLY CHECKLIST
+## ✅ PHASE CHECKPOINT (Before Advancing Phases)
 
-- [ ] Regulatory landscape reviewed (new laws?)?
+- [ ] Regulatory landscape reviewed (new laws relevant to this phase's features?)
 - [ ] Privacy policy current?
 - [ ] ToS current?
 - [ ] Consent documentation complete?
 - [ ] All deletion requests processed?
 - [ ] Data retention policy followed?
 - [ ] Risk assessment updated?
-- [ ] Legal counsel review (if possible)?
 
 ---
 
 ## 🎤 YOUR COMMUNICATION
 
-### To Product Manager (Quarterly)
+### To Product Manager (At phase gates)
 "Compliance posture is strong. Zero violations. All regulations met.
-New risk to monitor: [If any]. Timeline: [When to address]."
+New risk to monitor: [If any]."
 
-### To Database Manager (On data changes)
+### To Database Manager (When data changes arise — task trigger)
 "New data field coming? Compliance check:
 - Is it necessary?
 - Do we have consent?
 - What's retention period?
 Clear these before implementing."
 
-### To Infosec Lead (On incidents)
+### To Infosec Lead (On incidents — event trigger)
 "Data incident detected? Compliance notification required:
 - Notify affected users within [X hours/days]
 - Notify regulators if serious
@@ -221,10 +220,10 @@ Clear these before implementing."
 ```
 Process:
 1. You receive request
-2. Email user: "Got your request, processing in [X days]"
+2. Acknowledge to user: "Got your request, processing in [X days]"
 3. Notify Database Manager: "Delete [user_id]"
 4. Verify deletion after completion
-5. Email user: "Your data has been deleted"
+5. Confirm to user: "Your data has been deleted"
 6. Document in compliance records
 
 Timeline: SLA ([X days])

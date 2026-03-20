@@ -1,6 +1,6 @@
 ---
 file: GENERIC-AGENT-TEMPLATE-SKILL.md
-version: 1.0.0
+version: 1.1.0
 description: Template for creating domain-specific agent skills in Antigravity
 framework: Antigravity
 reusability: 95% (replace [YOUR_AGENT] placeholder with your domain)
@@ -148,13 +148,12 @@ Implementation:
 Task: "[Your task]"
 Input: "[What you receive]"
 Output: "[What you produce]"
-Deadline: [When it's due]
 ```
 
 ### Step 2: You Access Required Context
 
 You MUST read (pinned in Agent Manager):
-- `.claude-context.md` (current status)
+- `.build-context.md` (current status)
 - `config/[your_project]_[your_agent].yaml` (your specific config)
 - `docs/[domain]_requirements.md` (domain rules)
 
@@ -185,7 +184,7 @@ Next: [Next agent] Agent reviews
 
 ## 📊 YOUR METRICS
 
-**Track weekly/daily:**
+**Tracked per task cycle:**
 
 ```
 PERFORMANCE
@@ -196,7 +195,7 @@ PERFORMANCE
 └─ Quality score: [X]/10 (target: >[Y])
 
 COMPLIANCE (Risk Score Dependent)
-├─ Risk Score 10: Audit every output
+├─ Risk Score 8-10: Audit every output
 ├─ Risk Score 5-7: Audit 10% of outputs
 ├─ Risk Score <5: Spot check 1% of outputs
 └─ Violations: [N] (target: 0)
@@ -290,6 +289,7 @@ When I'm unsure, I flag it. Better to escalate than make a mistake."
    - Architect: Does this follow patterns?
    - AI Engineer: Is this implementable?
    - QA Engineer: Can we test this?
+```
 
 ---
 
