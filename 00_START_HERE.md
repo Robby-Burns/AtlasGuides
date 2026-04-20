@@ -1,6 +1,6 @@
 # 🚀 START HERE - AI Agent Framework Documentation
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026 | **Part:** 1/10 of Framework  
+**Version:** 1.6.0 | **Updated:** April 6, 2026 | **Part:** 1/10 of Framework  
 **For:** AI Coding Assistants (Cursor/Claude Code/Antigravity) + You  
 **Status:** Production Ready ✅  
 **Framework Rating:** 10/10 ⭐ (Why: Prevents 80% of agent bugs • 2026-compliant • 30-50% faster builds • 80%+ code reuse)
@@ -23,7 +23,7 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 ## 🗺️ Quick Navigation
 
 - [30-Second Quick Start](#-30-second-quick-start)
-- [What's New in v1.5.0](#-whats-new-in-v150)
+- [What's New in v1.6.0](#-whats-new-in-v160)
 - [The Risk Scoring Decision Tree](#-the-risk-scoring-decision-tree-0-17-scale)
 - [Framework Files Overview](#-framework-files-overview-1-10-docs)
 - [Platform Deployment Matrix](#-platform-deployment-matrix)
@@ -39,21 +39,23 @@ This file is your **decision entry point** into the AI Agent Framework. It helps
 4. Use the `/new-agent` prompt pattern from `agent.md`.
 5. Force the AI to use `08_AGNOSTIC_FACTORIES.md` so you aren't locked into one LLM or orchestrator.
 6. Set `audit.notification_channel` in `scale.yaml` before first deploy (see `09_AUDIT_AND_MAINTENANCE.md`).
+7. If using the Dual-LLM build/check cycle, read `DUAL-LLM-PHASE-CYCLE.md` — it defines how your Builder LLM and Checker LLM collaborate across 7 rounds per phase.
 
 **New team member?** Read `TEAM_ONBOARDING.md` first — it covers everything in 15 minutes.
 
 ---
 
-## 🆕 What's New in v1.5.0
+## 🆕 What's New in v1.6.0
 
-- **System Kernel (`agent.md`):** Single source of truth for AI behavior. Enforces Citation Law, 5-Phase Loop, and Debate Protocol across all tools (Cursor, Claude Code, Gemini/Antigravity, Windsurf).
+- **Dual-LLM Phase Cycle (`DUAL-LLM-PHASE-CYCLE.md`):** Formal framework for running two separate LLMs — one to build, one to check — across 7 structured rounds per phase. Prevents a single line of thinking from rationalizing its own blind spots. Builder Team (Gemini or similar) implements; Checker Team (Claude or similar) traces root causes and delivers ranked suggestions. Governance Gate controls phase advancement.
+- **System Kernel (`agent.md`):** Now includes Dual-LLM Cycle awareness — each LLM knows its team, its round, and its handoff responsibilities.
 - **Tiered Debate Protocol:** Tier 1 (lightweight sanity checks), Tier 2 (full council at key moments), Tier 3 (human-triggered `/debate`). Ensures quality without killing velocity.
 - **Multi-Tool Sync:** `sync-kernel.sh` propagates kernel to `.cursorrules`, `CLAUDE.md`, and `.windsurfrules` in one command.
 - **Team Onboarding:** `TEAM_ONBOARDING.md` gets new team members productive in 15 minutes.
 - **Scheduled Audit System:** Scheduled dependency, API, framework, and skills audits with mandatory HITL sign-off.
 - **Skills Lifecycle:** Rule of 3 identification, `/new-skill` command, Skills Registry in `.build-context.md`, audit review in Layer 4.
 - **Naming Normalization:** `.claude-context.md` renamed to `.build-context.md` across all files for tool-agnostic clarity.
-- **10-Part Framework:** New `09_AUDIT_AND_MAINTENANCE.md` as the dedicated maintenance guide.
+- **10-Part Framework:** `09_AUDIT_AND_MAINTENANCE.md` as the dedicated maintenance guide.
 
 ---
 
@@ -90,17 +92,40 @@ Before writing any code, you must score your agent.
 
 | File | What it is |
 | :--- | :--- |
-| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law. Synced to all tools. |
+| `agent.md` | **The System Kernel.** AI behavior rules, debate protocol, citation law. Synced to all tools. Includes Dual-LLM Cycle awareness. |
+| `DUAL-LLM-PHASE-CYCLE.md` | **The Build/Check Cycle.** 7-round per-phase framework using two LLMs — Builder Team builds, Checker Team traces root causes and delivers ranked suggestions, Governance Gate controls advancement. |
 | `TEAM_ONBOARDING.md` | 15-minute onboarding guide for new team members. |
 | `scripts/sync-kernel.sh` | Copies `agent.md` to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`. |
-| `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. |
+| `MASTER_AGENT_DISCOVERY_PROMPT.md` | Interview prompt for architecting new agents before coding. Output feeds Round 1 of the Dual-LLM cycle. |
 | `MASTER_DOCS_PROMPT.md` | Post-build prompt for generating project documentation. |
+
+---
+
+## 🔄 The Dual-LLM Phase Cycle (Overview)
+
+If you are running two LLMs in parallel — one to build, one to check — each phase follows this 7-round structure. See `DUAL-LLM-PHASE-CYCLE.md` for the full specification.
+
+```
+ROUND 1 → Builder Team plans and builds
+ROUND 2 → Checker Team reviews (root cause chains + ranked suggestions)
+ROUND 3 → Builder Team builds again (incorporates feedback)
+ROUND 4 → Builder Team self-fix pass (internal cleanup)
+ROUND 5 → Checker Team reviews again
+ROUND 6 → Builder Team final build
+ROUND 7 → Governance Gate (approve to advance, or loop back)
+```
+
+**Builder Team (LLM 1):** Product Manager, Architect, AI Engineer, Database Manager, DevOps Manager, UX/UI Designer, Data Analyst
+
+**Checker Team (LLM 2):** QA Engineer, Devil's Advocate, Red Team Hacker, Infosec Lead, Project Lead
+
+**Governance Gate:** Compliance Officer, Marketing Manager (if user-facing), Project Lead
 
 ---
 
 ## 📌 Version & Status
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** April 6, 2026  
 **Status:** Production Ready ✅  
 **Next File:** [01_QUICK_REFERENCE.md](./01_QUICK_REFERENCE.md)

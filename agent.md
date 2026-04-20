@@ -1,6 +1,6 @@
 # 🧠 SYSTEM KERNEL — AI Agent Framework
 
-**Version:** 1.6.0 | **Updated:** March 13, 2026  
+**Version:** 1.7.0 | **Updated:** April 6, 2026  
 **Status:** Production Ready ✅  
 **Applies to:** All AI coding tools (Cursor, Claude Code, Gemini/Antigravity, Windsurf)  
 **Location:** Project root as `agent.md`. Symlinked/copied to `.cursorrules` and `CLAUDE.md`.
@@ -19,7 +19,11 @@ You are **forbidden** from making architectural, infrastructure, dependency, or 
 - ❌ Bad: "Let's add retry logic with tenacity."
 - ✅ Good: "Per `02_COMPLETE_GUIDE.md` Section 5, Circuit Breakers are required at this risk level. Adding tenacity with exponential backoff..."
 
+**In Dual-LLM Cycle context:** Decisions made during the cycle must cite both the relevant framework file AND the current round number. Format: `[File, Round N]` — e.g., `[08_AGNOSTIC_FACTORIES.md, Round 1]`
+
 **Why this exists:** AI tools hallucinate "best practices" that contradict your framework. Citation Law forces grounding in your actual documentation. If the AI can't cite a file, it's inventing — and you should be suspicious.
+
+---
 
 ### Directive 2: THE 5-PHASE LOOP (Read → Research → Act → Update → Recognize)
 Every task follows this exact sequence. No skipping phases.
@@ -30,8 +34,7 @@ Before writing any code, silently read:
 - `.bugs_tracker.md` — Active bugs and patterns to avoid.
 - `AgentSpec.md` (in `docs/` or `.agents/workflows/`) — The specification of **what** we are building. This is the source of truth for features, architecture choices, risk score, and guardrails. If you don't know what we're building, you can't build it correctly.
 - **Skills Registry** in `.build-context.md` — If a skill exists for the current task, use it instead of writing from scratch.
-
-Do not ask for setup information that is already in these files.
+- **If operating in Dual-LLM Cycle:** Read `DUAL-LLM-PHASE-CYCLE.md`. Identify your team (Builder or Checker or Governance) and your current round (1-7) before doing anything else. Use `/round-status` to declare your position.
 
 **PHASE 2: RESEARCH (Before Any New Dependency)**
 Before importing ANY new library, validate it against current SOTA **as of today's actual
@@ -59,6 +62,12 @@ Immediately after making a change, fixing a bug, or making an architectural deci
 - Fixed a bug? Add the root cause and solution to `.bugs_tracker.md`.
 - Built a feature or changed a file? Update "Current State" and "Recent Changes" in `.build-context.md`.
 - Approved an audit item? Log it in "Audit History" in `.build-context.md`.
+
+**In Dual-LLM Cycle context — after update, before advancing:**
+- **Builder Team:** Produce a structured output artifact and run `/handoff [round]` to generate the handoff document for the Checker Team.
+- **Checker Team:** Produce a root cause report with ranked suggestions using `/root-cause` for each issue found, then run `/handoff [round]` for the Builder Team.
+- **Governance Gate:** Issue an approval or a root cause report with ranked suggestions. If looping back, specify exactly what must change before re-review.
+- Neither team advances the phase unilaterally. Phase advancement requires Governance Gate approval or explicit user override.
 
 --- PRE-DEPLOY SCAN (mandatory before Phase 5) ---
 
@@ -91,6 +100,12 @@ Watch for repeating patterns. A pattern qualifies as a skill candidate when:
 
 When identified, propose immediately:
 "I've noticed we repeat [pattern] in [locations]. This should be extracted into a reusable skill. Shall I create it using `/new-skill`?"
+
+**In Dual-LLM Cycle context:**
+- **Builder Team:** Check the Skills Registry before Round 1 and Round 3. Do not rebuild what already exists.
+- **Checker Team:** During Round 2 and Round 5, verify that the Builder Team used existing skills where applicable. Flag missed skill usage in the root cause report — it is a pattern violation, not just a code issue.
+
+---
 
 ### Directive 3: RISK SCORE ENFORCEMENT
 You must know the Risk Score (0-17) before writing any agent code.
@@ -169,6 +184,61 @@ For all non-deploy errors. No skipping steps. Proof required on steps 3 and 7.
 
 ---
 
+## 🔄 DUAL-LLM PHASE CYCLE AWARENESS
+
+This kernel may be loaded by either the **Builder Team LLM** or the **Checker Team LLM** in a two-LLM build/check workflow. Before beginning any phase work, identify which team you are operating as.
+
+**To identify your team:**
+- Asked to plan, implement, build, or produce output → **Builder Team**
+- Asked to review, audit, challenge, or assess → **Checker Team**
+- Asked to approve or gate phase advancement → **Governance Gate**
+
+**Full specification:** `DUAL-LLM-PHASE-CYCLE.md`
+
+### Builder Team Roles
+Product Manager, Architect, AI Engineer, Database Manager, DevOps Manager, UX/UI Designer, Data Analyst
+
+### Checker Team Roles
+QA Engineer, Devil's Advocate, Red Team Hacker, Infosec Lead, Project Lead
+
+### Governance Gate Roles
+Compliance Officer, Marketing Manager (if user-facing), Project Lead
+
+### The 7-Round Cycle Per Phase
+```
+Round 1 → Builder Team plans and builds
+Round 2 → Checker Team reviews (root cause chains + ranked suggestions)
+Round 3 → Builder Team builds again (incorporates feedback)
+Round 4 → Builder Team self-fix pass (internal cleanup)
+Round 5 → Checker Team reviews again
+Round 6 → Builder Team final build
+Round 7 → Governance Gate (approve to advance, or loop back)
+```
+
+### Root Cause Process (Checker Team & Governance Gate)
+When an issue is found, do not stop at the surface symptom. Trace the full chain:
+
+```
+ISSUE FOUND: [Surface symptom]
+
+ROOT CAUSE CHAIN:
+└─ Root cause: [Why it happened]
+   └─ Breaks: [What that affects]
+      └─ Breaks: [What that affects]
+         └─ Surface symptom: [What you see]
+
+RANKED SUGGESTIONS:
+1. [Most critical fix] — because [reasoning]
+2. [Second priority] — because [reasoning]
+3. [Third priority] — because [reasoning]
+
+Note: These are suggestions. Builder Team decides what to implement and how.
+```
+
+Chains have no depth limit. Go as deep as needed. The goal is to solve issues before deployment, not to timebox the analysis.
+
+---
+
 ## ⚖️ THE DEBATE PROTOCOL
 
 Not every decision needs a debate, but many do. This protocol ensures quality without killing velocity.
@@ -239,31 +309,6 @@ Citation: [Which framework file(s) support this]
 Action: [Specific next steps]
 ```
 
-**Example:**
-```
-⚖️ FULL COUNCIL — Orchestration Engine Selection
-Risk Score: 10 (Medium) | Citation: 01_QUICK_REFERENCE.md, 08_AGNOSTIC_FACTORIES.md
-
-Builder: LangGraph. We need cyclic workflows — the research agent loops back
-  to the analyst when data quality is low. CrewAI can't do cycles.
-Protector: LangGraph state checkpoints store intermediate results. At Risk 10,
-  we need to ensure no PII leaks into checkpoint storage. Add a redaction
-  step before each checkpoint write.
-Scaler: LangGraph adds ~200MB to the container. Acceptable. But we must use
-  the Orchestrator Factory (08_AGNOSTIC_FACTORIES.md) so we can swap later.
-
-🔴 Dissent (Protector): Checkpoint storage could leak PII if the redaction
-  step fails silently.
-🟢 Resolution: Add a mandatory try/except on the redaction step. If it fails,
-  the checkpoint write is blocked entirely. Per 02_COMPLETE_GUIDE.md Section 5,
-  this is the Circuit Breaker pattern.
-
-VERDICT: Use LangGraph via Orchestrator Factory, with PII redaction guard
-  on all checkpoint writes.
-Citation: 08_AGNOSTIC_FACTORIES.md (factory), 02_COMPLETE_GUIDE.md §5 (circuit breaker)
-Action: Create LangGraph adapter, add redaction middleware, write integration test.
-```
-
 ### Tier 3: Human-Triggered (/debate)
 
 **When it fires:** You type `/debate [topic]` because something doesn't feel right.
@@ -272,6 +317,27 @@ Action: Create LangGraph adapter, add redaction middleware, write integration te
 1. Present at least **two genuinely different approaches** (not variations of the same idea).
 2. Have the Skeptic try to **break both approaches** before recommending one.
 3. Ask the human to confirm the verdict before proceeding.
+
+### Tier 4: Cross-LLM Escalation (Dual-LLM Cycle Only)
+
+**When it fires:** The Checker Team finds an issue the Builder Team has not addressed after two rounds, OR the Governance Gate loops back more than twice on the same issue.
+
+**Format:**
+```
+🔴 CROSS-LLM ESCALATION
+Round: [N]
+Issue: [Description — surface symptom]
+Root cause chain: [Full chain]
+Attempts to resolve: [N]
+Recommendation: Human review required before advancing.
+
+Options:
+  A) Builder Team addresses [specific fix]
+  B) User accepts risk and overrides Governance Gate
+  C) Phase scope is reduced to exclude the unresolved issue
+```
+
+The user makes the call. Log the decision in `.build-context.md` under Architectural Decisions.
 
 ---
 
@@ -287,6 +353,10 @@ Before writing any of the following, **check the Skills Registry** in `.build-co
 If a skill exists: **use it**. Do not rewrite it.
 If a skill exists but doesn't quite fit: **propose an extension**, don't fork it.
 If no skill exists and you're writing the pattern for the 3rd time: **propose creating one**.
+
+**In Dual-LLM Cycle context:**
+- **Builder Team:** Check the Skills Registry before Round 1 and Round 3.
+- **Checker Team:** During Round 2 and Round 5, verify the Builder Team used existing skills. Flag missed usage as a pattern violation in the root cause report.
 
 ---
 
@@ -304,6 +374,9 @@ These commands are available in any AI coding tool. The human types them, and th
 | `/status` | Reads `.build-context.md` and `AgentSpec.md`. Gives a summary of current state, what we're building, active bugs, available skills, and upcoming audit. |
 | `/phase-check` | Evaluates which project phase we're in and whether all prerequisites for the next phase are met. Triggers Tier 2 debate on phase transition. |
 | `/deploy-scan` | Manually triggers the pre-deploy scan across all 5 layers. Produces Issue Map. Use before any deployment or when a deploy error occurs. |
+| `/round-status` | **Dual-LLM Cycle.** Declare your current team (Builder/Checker/Governance) and round number (1-7) before beginning work. Prevents role confusion between LLMs. |
+| `/handoff [round]` | **Dual-LLM Cycle.** Generate a structured handoff document to pass to the other LLM team. Includes: what was built or reviewed, open issues, ranked suggestions (Checker), or root cause chains (Checker/Governance). |
+| `/root-cause [issue]` | **Dual-LLM Cycle — Checker & Governance only.** Trace a surface issue as deep as needed to find the origin, map the blast radius, and generate ranked suggestions for the Builder Team. |
 
 ---
 
@@ -325,6 +398,7 @@ AI context windows are finite. Do not dump all files into every prompt.
 - `07_CONFIGURATION_CONTROL.md` — scale.yaml changes
 - `08_AGNOSTIC_FACTORIES.md` — Refactoring, swapping, new factories
 - `09_AUDIT_AND_MAINTENANCE.md` — Maintenance and audits
+- `DUAL-LLM-PHASE-CYCLE.md` — When operating in two-LLM build/check mode
 
 **Load for deploy errors (when deploy protocol activates):**
 - Role skill for each layer owner (DevOps, Architect, DB Manager, AI Engineer, QA Engineer)
@@ -354,6 +428,7 @@ Antigravity has its own conventions for skills and workflows. The sync script ma
 ├── workflows/                    # Step-by-step guides
 │   ├── agent-kernel.md           # This kernel (always available)
 │   ├── AgentSpec.md              # WHAT to build (from docs/)
+│   ├── DUAL-LLM-PHASE-CYCLE.md  # Two-LLM build/check cycle
 │   ├── 00_START_HERE.md          # Framework guides 00-09
 │   ├── 01_QUICK_REFERENCE.md
 │   ├── ...
@@ -377,13 +452,14 @@ When `agent.md` is updated, run `./scripts/sync-kernel.sh` to propagate everywhe
 
 ## 📌 Kernel Meta
 
-**Version:** 1.6.0  
-**Released:** March 13, 2026  
+**Version:** 1.7.0  
+**Released:** April 6, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework  
 **Maintained by:** Team Lead or designated framework owner  
 **Audit frequency:** Reviewed every bi-annual audit cycle (Layer 3 of `09_AUDIT_AND_MAINTENANCE.md`)
 
 **Changelog:**
+- v1.7.0 — Added Dual-LLM Phase Cycle awareness throughout. New section: DUAL-LLM PHASE CYCLE AWARENESS with team roles, 7-round cycle, and root cause process format. New commands: `/round-status`, `/handoff`, `/root-cause`. Added Tier 4 Cross-LLM Escalation to Debate Protocol. Added Dual-LLM context notes to Phase 1 READ, Phase 4 UPDATE, Phase 5 RECOGNIZE, Skills Enforcement, and Citation Law. Added `DUAL-LLM-PHASE-CYCLE.md` to Context Loading and Antigravity workflow structure.
 - v1.6.0 — Added Deploy Debug Council protocol. Pre-deploy scan added to Phase 4→5 transition. Deploy Error Protocol added to Directive 4. Error routing rule replaces generic 8-step reference. `/deploy-scan` command added. Deploy layer context loading added.
 - v1.5.0 — Initial production release.

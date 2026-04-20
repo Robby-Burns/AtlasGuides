@@ -1,6 +1,6 @@
 # 👋 Team Onboarding — AI Agent Framework
 
-**Version:** 1.5.0 | **Updated:** March 8, 2026  
+**Version:** 1.6.0 | **Updated:** April 6, 2026  
 **Status:** Production Ready ✅  
 **Audience:** New team members joining a project that uses this framework  
 **Time to read:** 15 minutes
@@ -27,6 +27,7 @@ Open `agent.md` in the project root. This is the **System Kernel** — the set o
 - **The 5-Phase Loop:** Read → Research → Act → Update → Recognize. Every task, every time.
 - **Debate Protocol:** The AI debates itself at key moments to catch bad decisions early.
 - **Skills Enforcement:** Before writing code, the AI checks if a reusable skill already exists.
+- **Dual-LLM Cycle Awareness:** If this project uses two LLMs (one to build, one to check), the kernel tells each LLM which team it's on and what its role is in each round.
 
 You don't need to memorize it. The AI reads it automatically.
 
@@ -71,6 +72,12 @@ You don't need to read all 10 guides today. The AI loads them on demand. But kno
 | `08_AGNOSTIC_FACTORIES.md` | Swap any dependency with one config change. |
 | `09_AUDIT_AND_MAINTENANCE.md` | Bi-annual audits. HITL sign-off. |
 
+**Supporting files:**
+
+| File | One-Line Summary |
+|------|-----------------|
+| `DUAL-LLM-PHASE-CYCLE.md` | Two-LLM build/check cycle. 7 rounds per phase. Read if you're running Builder and Checker LLMs separately. |
+
 ### Step 5: Learn the Commands (5 min)
 
 These work in any AI tool:
@@ -84,6 +91,10 @@ These work in any AI tool:
 | `/debate [topic]` | When something doesn't feel right. Forces a multi-role debate. |
 | `/run-audit` | Triggering the bi-annual maintenance audit. |
 | `/phase-check` | "Are we ready to move to the next phase?" |
+| `/deploy-scan` | Pre-deploy layer scan. Use before any deployment. |
+| `/round-status` | **Dual-LLM Cycle only.** Declare your team and round before beginning work. |
+| `/handoff [round]` | **Dual-LLM Cycle only.** Generate structured handoff document for the other LLM team. |
+| `/root-cause [issue]` | **Dual-LLM Cycle — Checker/Governance only.** Trace an issue to its root cause and produce ranked suggestions. |
 
 ---
 
@@ -106,7 +117,34 @@ A multi-role debate with a structured verdict. Happens automatically for archite
 **Tier 3 — Human-Triggered:**
 You type `/debate [topic]` and the AI runs a full council that presents two genuinely different approaches, tries to break both, and asks you to confirm before proceeding.
 
-**Your role in debates:** You don't need to do anything for Tier 1 and 2 — they happen automatically. For Tier 2, read the verdict and confirm or push back. For Tier 3, you're the judge.
+**Tier 4 — Cross-LLM Escalation (Dual-LLM Cycle only):**
+When the Checker Team and Builder Team can't resolve an issue across two rounds, or the Governance Gate loops back more than twice on the same issue, a Tier 4 escalation fires and the human makes the call directly.
+
+**Your role in debates:** You don't need to do anything for Tier 1 and 2 — they happen automatically. For Tier 2, read the verdict and confirm or push back. For Tier 3, you're the judge. For Tier 4, you break the deadlock.
+
+---
+
+## The Dual-LLM Phase Cycle (If Your Project Uses It)
+
+Some projects run two separate LLMs — a **Builder Team LLM** (e.g. Gemini) and a **Checker Team LLM** (e.g. Claude) — to prevent a single line of thinking from rationalizing its own blind spots.
+
+**The 7-round cycle per phase:**
+
+| Round | Team | Job |
+|-------|------|-----|
+| 1 | Builder | Plans and builds |
+| 2 | Checker | Root cause analysis + ranked suggestions |
+| 3 | Builder | Builds again incorporating feedback |
+| 4 | Builder | Self-fix pass — internal cleanup |
+| 5 | Checker | Reviews again |
+| 6 | Builder | Final build |
+| 7 | Governance Gate | Approve to advance, or loop back |
+
+**If you are the Builder Team LLM:** Use `/round-status` to declare your team and round. Check Skills Registry before Round 1 and 3. When your round is complete, use `/handoff` to produce the structured handoff document for the Checker Team.
+
+**If you are the Checker Team LLM:** Use `/root-cause` for every issue you find — never stop at the surface symptom. Rank your suggestions (most critical first) but present them as suggestions, not mandates. Use `/handoff` to deliver your report to the Builder Team.
+
+**Full specification:** `DUAL-LLM-PHASE-CYCLE.md`
 
 ---
 
@@ -145,6 +183,8 @@ AI: [Updates Current State, Recent Changes, and Skills Registry]
 
 5. **Debates are not overhead.** They're insurance. A 30-second Tier 1 check is cheaper than a 3-hour debugging session caused by a bad dependency choice.
 
+6. **In the Dual-LLM Cycle, suggestions are not mandates.** The Checker Team and Governance Gate deliver ranked suggestions. The Builder Team owns the implementation decision. This is intentional — the Checker informs, the Builder decides.
+
 ---
 
 ## Common Questions
@@ -164,11 +204,17 @@ Yes. Add them to the "Standardized Commands" section of `agent.md` and run `sync
 **"What happens during the bi-annual audit?"**
 The system scans dependencies, API contracts, framework guides, and skills. It generates a report. A human reviews and approves each item. Nothing is auto-applied. See `09_AUDIT_AND_MAINTENANCE.md`.
 
+**"Do I have to use the Dual-LLM Cycle?"**
+No. It's optional. Use it when you want a second line of thinking to challenge the Builder's output — especially on high-risk agents (Score 11+) or complex phases where blind spots are costly. Single-LLM projects still use everything else in the framework.
+
+**"Who decides when the Governance Gate approves?"**
+The Governance Gate runs on the Checker LLM and uses Compliance Officer, Marketing Manager (if user-facing), and Project Lead roles. It approves or loops back. If it loops back more than twice on the same issue, a Tier 4 Cross-LLM Escalation fires and you (the human) make the call.
+
 ---
 
 ## 📌 Document Meta
 
-**Version:** 1.5.0  
-**Released:** March 8, 2026  
+**Version:** 1.6.0  
+**Released:** April 6, 2026  
 **Status:** Production Ready ✅  
 **Part of:** 10-Part AI Agent Framework
